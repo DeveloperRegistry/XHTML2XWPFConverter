@@ -40,7 +40,7 @@ public class TableCellParsingElement extends AbstractParsingElement {
 	public TableCellParsingElement(XWPFTableRow docxTableRow,
 			XWPFDocument document) {
 		super(ElementType.TABLE_CELL, false, document);
-		super.setMayContainText(true);
+		super.setMayContainParagraph(true);
 		this.docxTableRow = docxTableRow;
 		this.docxTableCell = this.docxTableRow.createCell();
 		//System.out.println("Created TABLE_CELL in docxTableRow="+docxTableRow);

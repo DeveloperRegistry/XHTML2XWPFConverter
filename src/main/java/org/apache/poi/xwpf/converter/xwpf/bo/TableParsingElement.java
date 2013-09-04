@@ -13,12 +13,15 @@
  */
 package org.apache.poi.xwpf.converter.xwpf.bo;
 
+import java.math.BigInteger;
+
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.converter.xwpf.common.ElementType;
 import org.apache.poi.xwpf.converter.xwpf.common.HTMLConstants;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTable.XWPFBorderType;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageSz;
 
 /**
  * This class encapsulates a table parsing element.
@@ -42,7 +45,7 @@ public class TableParsingElement extends AbstractParsingElement {
 		super(ElementType.TABLE, topLevelElement, document);
 		docxTable = document.createTable();
 
-		//Remove default rows
+		// Remove default rows
 		for (int i = 0; i <= docxTable.getNumberOfRows(); i++) {
 			docxTable.removeRow(i);
 		}
@@ -85,12 +88,13 @@ public class TableParsingElement extends AbstractParsingElement {
 		if (visible) {
 			color = HTMLConstants.COLOR_BLACK;
 		}
-	//	System.out.println("setBorder. visible=" + visible + "; thick=" + thick
-	//			+ "; size=" + size + "; color=" + color);		
+		// System.out.println("setBorder. visible=" + visible + "; thick=" +
+		// thick
+		// + "; size=" + size + "; color=" + color);
 		docxTable.setInsideHBorder(borderToUse, Units.toEMU(size),
 				Units.toEMU(space), color);
 		docxTable.setInsideVBorder(borderToUse, Units.toEMU(size),
-				Units.toEMU(space), color);		
+				Units.toEMU(space), color);
 	}
 
 	/**
@@ -108,8 +112,8 @@ public class TableParsingElement extends AbstractParsingElement {
 	public void setCellMargins(int top, int left, int bottom, int right) {
 		docxTable.setCellMargins(Units.toEMU(top), Units.toEMU(left),
 				Units.toEMU(bottom), Units.toEMU(right));
-	//	System.out.println("setCellMargins. top=" + top + "; left=" + left
-	//			+ "; bottom" + bottom + "; right=" + right);
+		// System.out.println("setCellMargins. top=" + top + "; left=" + left
+		// + "; bottom" + bottom + "; right=" + right);
 	}
 
 	/**
@@ -117,9 +121,21 @@ public class TableParsingElement extends AbstractParsingElement {
 	 * 
 	 * @param width
 	 *            table width
+	 * @param usePercentage
+	 *            if true, use percentage instead of pixels
 	 */
-	public void setWidth(int width) {
-		docxTable.setWidth(Units.toEMU(width));
-		//System.out.println("setWidth:" + width);
+	public void setWidth(int width, boolean usePercentage) {
+
+		if (usePercentage) {
+			CTPageSz pageSize = this.getDocument().getDocument().getBody()
+					.getSectPr().getPgSz();
+			BigInteger documentWidth = pageSize.getW();
+			int tableWidth = (documentWidth.intValue() / 100) * width;
+			docxTable.setWidth(tableWidth);
+
+		} else {
+			docxTable.setWidth(Units.toEMU(width));
+		}
+
 	}
 }

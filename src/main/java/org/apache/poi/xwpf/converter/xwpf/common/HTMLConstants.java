@@ -43,6 +43,7 @@ public class HTMLConstants {
 	public static final String HTML_ATTRIBUTE_VALUE_WIDTH = "width:";
 	public static final String HTML_ATTRIBUTE_VALUE_HEIGHT = "height:";
 	public static final String HTML_ATTRIBUTE_VALUE_PX = "px";
+	public static final String HTML_ATTRIBUTE_VALUE_PERCENTAGE = "%";
 	public static final String HTML_ATTRIBUTE_VALUE_BORDER_PRESENT = "1";
 
 	public static final String COLOR_BLACK = "FF0000";

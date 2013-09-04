@@ -27,6 +27,7 @@ import org.apache.poi.xwpf.converter.xwpf.bo.TableRowParsingElement;
 import org.apache.poi.xwpf.converter.xwpf.bo.XWPFOptions;
 import org.apache.poi.xwpf.converter.xwpf.common.ElementType;
 import org.apache.poi.xwpf.converter.xwpf.common.HTMLConstants;
+import org.apache.poi.xwpf.converter.xwpf.exception.XWPFDocumentConversionException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -106,6 +107,8 @@ public class XWPFMapper extends DefaultHandler {
 		this.currentTextBuffer = new StringBuffer();
 		AbstractParsingElement newElement = null;
 
+		//System.out.println("Element: " + name);
+
 		if (HTMLConstants.HTML_TAG.equals(name)) {
 			// Do nothing
 		} else if (HTMLConstants.TABLE_TAG.equals(name)) {
@@ -130,7 +133,7 @@ public class XWPFMapper extends DefaultHandler {
 		} else if (HTMLConstants.IMG_TAG.equals(name)) {
 			newElement = this.handleImageStart(atts);
 		} else {
-			//  development only. Remove before releasing code
+			// development only. Remove before releasing code
 			// throw new XWPFDocumentConversionException(" Unsupported tag: "
 			// + name + ". Implement the tag!");
 		}
@@ -317,7 +320,7 @@ public class XWPFMapper extends DefaultHandler {
 		AbstractParsingElement containingElement = null;
 
 		if (!topLevel) {
-			containingElement = this.findLastMayContainTextElement();
+			containingElement = this.findLastMayContainParagraphElement();
 		}
 
 		ParagraphParsingElement paragraph = new ParagraphParsingElement(
@@ -344,6 +347,25 @@ public class XWPFMapper extends DefaultHandler {
 
 		for (int j = this.parsingTree.size() - 1; j >= 0; j--) {
 			if (this.parsingTree.get(j).isMayContainText()) {
+				result = this.parsingTree.get(j);
+				break;
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * This method finds the last element in the parsing tree that may contain
+	 * paragraph.
+	 * 
+	 * @return the last element in the parsing tree that may contain paragraph
+	 */
+	private AbstractParsingElement findLastMayContainParagraphElement() {
+		AbstractParsingElement result = null;
+
+		for (int j = this.parsingTree.size() - 1; j >= 0; j--) {
+			if (this.parsingTree.get(j).isMayContainParagraph()) {
 				result = this.parsingTree.get(j);
 				break;
 			}
@@ -529,16 +551,8 @@ public class XWPFMapper extends DefaultHandler {
 						if (styleVariable
 								.contains(HTMLConstants.HTML_ATTRIBUTE_VALUE_WIDTH)) {
 
-							String number = styleVariable
-									.substring(
-											styleVariable
-													.indexOf(HTMLConstants.HTML_ATTRIBUTE_VALUE_WIDTH)
-													+ HTMLConstants.HTML_ATTRIBUTE_VALUE_WIDTH
-															.length(),
-											styleVariable
-													.indexOf(HTMLConstants.HTML_ATTRIBUTE_VALUE_PX));
-							int tableWidth = Integer.parseInt(number);
-							tableElement.setWidth(tableWidth);
+							this.handleTableWidthAttribute(tableElement,
+									styleVariable);
 						}
 					} catch (NumberFormatException nfe) {
 						System.out.println("Unable to parse style: " + style);
@@ -549,6 +563,38 @@ public class XWPFMapper extends DefaultHandler {
 			}
 
 		}
+	}
+
+	/**
+	 * This method handles table Width attribute.
+	 * 
+	 * @param tableElement
+	 *            table element
+	 * @param styleVariable
+	 *            xhtml width attribute
+	 */
+	private void handleTableWidthAttribute(TableParsingElement tableElement,
+			String styleVariable) {
+		boolean usePercentage = false;
+		String type = null;
+
+		if (styleVariable.contains(HTMLConstants.HTML_ATTRIBUTE_VALUE_PX)) {
+			type = HTMLConstants.HTML_ATTRIBUTE_VALUE_PX;
+		} else if (styleVariable
+				.contains(HTMLConstants.HTML_ATTRIBUTE_VALUE_PERCENTAGE)) {
+			type = HTMLConstants.HTML_ATTRIBUTE_VALUE_PERCENTAGE;
+			usePercentage = true;
+		} else {
+			throw new XWPFDocumentConversionException(
+					"Unknown width attribute: " + styleVariable);
+		}
+
+		String number = styleVariable.substring(
+				styleVariable.indexOf(HTMLConstants.HTML_ATTRIBUTE_VALUE_WIDTH)
+						+ HTMLConstants.HTML_ATTRIBUTE_VALUE_WIDTH.length(),
+				styleVariable.indexOf(type));
+		int tableWidth = Integer.parseInt(number);
+		tableElement.setWidth(tableWidth, usePercentage);
 	}
 
 	@Override

@@ -52,5 +52,31 @@ public class XHTML2XWPFConverterTestCase {
 				DataAccess.class.getResourceAsStream("text.xhtml"), out, null);
 		Assert.assertTrue(outFile.exists());
 	}
+	
+	@Test
+	public void testLetterConversionWithOutputToFile() throws Exception {
+
+		File outFile = new File("target/output_letter.docx");
+		outFile.getParentFile().mkdirs();
+
+		OutputStream out = new FileOutputStream(outFile);
+
+		XHTML2XWPFConverter.getInstance().convert(
+				DataAccess.class.getResourceAsStream("bo.xhtml"), out, null);
+		Assert.assertTrue(outFile.exists());
+	}
+	
+	@Test
+	public void testTableConversionWithOutputToFile() throws Exception {
+
+		File outFile = new File("target/output_table.docx");
+		outFile.getParentFile().mkdirs();
+
+		OutputStream out = new FileOutputStream(outFile);
+
+		XHTML2XWPFConverter.getInstance().convert(
+				DataAccess.class.getResourceAsStream("cv.xhtml"), out, null);
+		Assert.assertTrue(outFile.exists());
+	}
 
 }

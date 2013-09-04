@@ -33,6 +33,7 @@ public class AbstractParsingElement {
 	private boolean mayContainText;
 	private boolean mayContainStrong;
 	private boolean mayContainBullet;
+	private boolean mayContainParagraph;
 	private boolean strong;
 	private boolean bullet;
 	private StringBuffer paragraphData;
@@ -221,6 +222,21 @@ public class AbstractParsingElement {
 	 */
 	public void setBullet(boolean bullet) {
 		this.bullet = bullet;
+	}
+
+	/**
+	 * @return the mayContainParagraph
+	 */
+	public boolean isMayContainParagraph() {
+		return mayContainParagraph;
+	}
+
+	/**
+	 * @param mayContainParagraph
+	 *            the mayContainParagraph to set
+	 */
+	public void setMayContainParagraph(boolean mayContainParagraph) {
+		this.mayContainParagraph = mayContainParagraph;
 	}
 
 }

@@ -92,6 +92,8 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 
 	@Override
 	public void setParagraphData(StringBuffer paragraphData) {
+
+		// System.out.println("Setting paragraphData="+paragraphData);
 		this.paragraphData = paragraphData;
 
 		String para = paragraphData.toString();
