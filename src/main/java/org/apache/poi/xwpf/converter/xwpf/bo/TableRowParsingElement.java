@@ -40,8 +40,8 @@ public class TableRowParsingElement extends AbstractParsingElement {
 	public TableRowParsingElement(XWPFTable docxTable, XWPFDocument document) {
 		super(ElementType.TABLE_ROW, false, document);
 		this.docxTable = docxTable;
-		this.docxTableRow = this.docxTable.createRow();		
-	//	System.out.println("Created TABLE_ROW "+docxTableRow+" in table "+docxTable);
+		this.docxTableRow = this.docxTable.createRow();
+
 	}
 
 	/**

@@ -13,10 +13,17 @@
  */
 package org.apache.poi.xwpf.converter.xwpf.bo;
 
+import java.math.BigInteger;
+
+import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.converter.xwpf.common.ElementType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageSz;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
 
 /**
  * This class encapsulates a table cell parsing element.
@@ -28,6 +35,7 @@ public class TableCellParsingElement extends AbstractParsingElement {
 
 	private XWPFTableRow docxTableRow;
 	private XWPFTableCell docxTableCell;
+	private int currentCellCount;
 
 	/**
 	 * Constructor
@@ -36,14 +44,33 @@ public class TableCellParsingElement extends AbstractParsingElement {
 	 *            table
 	 * @param document
 	 *            document
+	 * @param currentCellCount
+	 *            current cell count in the particular row
 	 */
 	public TableCellParsingElement(XWPFTableRow docxTableRow,
-			XWPFDocument document) {
+			XWPFDocument document, int currentCellCount) {
 		super(ElementType.TABLE_CELL, false, document);
 		super.setMayContainParagraph(true);
 		this.docxTableRow = docxTableRow;
-		this.docxTableCell = this.docxTableRow.createCell();
-		//System.out.println("Created TABLE_CELL in docxTableRow="+docxTableRow);
+		this.currentCellCount = currentCellCount;
+
+		if (this.docxTableRow.getTable().getNumberOfRows() == 1) {
+			this.docxTableCell = this.docxTableRow.createCell();
+		//	System.out.println("Created new cell. Number of rows = 1.");
+		} else {
+
+			this.docxTableCell = this.docxTableRow
+					.getCell(this.currentCellCount - 1);
+		//	System.out.println("Created new cell. Number of rows = "+this.docxTableRow.getTable().getNumberOfRows()+
+		//			"; cell counter = "+this.currentCellCount+"; cell value="+this.docxTableCell);
+		}
+		
+		//Last resort to avoid NPEs
+		if(this.docxTableCell == null )
+		{
+			this.docxTableCell = this.docxTableRow.createCell();
+		}
+
 	}
 
 	/**
@@ -74,6 +101,75 @@ public class TableCellParsingElement extends AbstractParsingElement {
 	 */
 	public void setDocxTableCell(XWPFTableCell docxTableCell) {
 		this.docxTableCell = docxTableCell;
+	}
+
+	/**
+	 * This method sets height
+	 * 
+	 * @param height
+	 *            height
+	 * @param usePercentage
+	 *            if true, use percentage instead of pixels
+	 */
+	public void setHeight(int height, boolean usePercentage) {
+		if (usePercentage) {
+			CTPageSz pageSize = this.getDocument().getDocument().getBody()
+					.getSectPr().getPgSz();
+			BigInteger documentHeight = pageSize.getH();
+			int tableRowHeight = (documentHeight.intValue() / 100) * height;
+			this.docxTableRow.setHeight(tableRowHeight);
+
+		} else {
+			this.docxTableRow.setHeight(height);
+		}
+	}
+
+	/**
+	 * This method sets width
+	 * 
+	 * @param width
+	 *            width
+	 * @param usePercentage
+	 *            if true, use percentage instead of pixels
+	 */
+	public void setWidth(int width, boolean usePercentage) {
+
+		CTTc cttc = this.docxTableCell.getCTTc();
+		CTTcPr pr = cttc.getTcPr();
+		if (pr == null) {
+			pr = cttc.addNewTcPr();
+		}
+
+		CTTblWidth ctbl = pr.getTcW();
+		if (ctbl == null) {
+			ctbl = pr.addNewTcW();
+		}
+
+		if (usePercentage) {
+			CTPageSz pageSize = this.getDocument().getDocument().getBody()
+					.getSectPr().getPgSz();
+			BigInteger documentWidth = pageSize.getW();
+			int tableWidth = (documentWidth.intValue() / 100) * width;
+			ctbl.setW(BigInteger.valueOf(tableWidth));
+
+		} else {
+			ctbl.setW(BigInteger.valueOf(Units.toEMU(width)));
+		}
+	}
+
+	/**
+	 * @return the currentCellCount
+	 */
+	public int getCurrentCellCount() {
+		return currentCellCount;
+	}
+
+	/**
+	 * @param currentCellCount
+	 *            the currentCellCount to set
+	 */
+	public void setCurrentCellCount(int currentCellCount) {
+		this.currentCellCount = currentCellCount;
 	}
 
 }

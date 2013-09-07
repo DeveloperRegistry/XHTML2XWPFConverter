@@ -29,6 +29,7 @@ public class HTMLConstants {
 	public static final String A_TAG = "a";
 	public static final String UL_TAG = "ul";
 	public static final String LI_TAG = "li";
+	public static final String BR_TAG = "br";
 
 	public static final String STRONG_TAG = "strong";
 	public static final String IMG_TAG = "img";

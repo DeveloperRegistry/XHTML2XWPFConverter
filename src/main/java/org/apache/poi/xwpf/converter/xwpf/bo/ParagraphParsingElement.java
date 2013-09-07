@@ -111,6 +111,7 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 														// the paragraph
 		run.setBold(this.isStrong());
 		run.setText(para);
+	//	System.out.println("Set text: "+para);
 
 	}
 
@@ -134,5 +135,13 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 	 */
 	public void setDocxParagraph(XWPFParagraph docxParagraph) {
 		this.docxParagraph = docxParagraph;
+	}
+
+	/**
+	 * This method adds a new line break.
+	 */
+	public void addLineBreak() {
+		XWPFRun run = this.docxParagraph.createRun();
+		run.addCarriageReturn();
 	}
 }

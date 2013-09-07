@@ -49,6 +49,7 @@ public class XWPFMapper extends DefaultHandler {
 	private TableRowParsingElement currentRow;
 	private StringBuffer currentTextBuffer;
 	private List<AbstractParsingElement> parsingTree;
+	private int tableCellCounter;
 
 	/**
 	 * Private constructor to prevent initialization.
@@ -107,7 +108,7 @@ public class XWPFMapper extends DefaultHandler {
 		this.currentTextBuffer = new StringBuffer();
 		AbstractParsingElement newElement = null;
 
-		//System.out.println("Element: " + name);
+	//	System.out.println("Element: " + name);
 
 		if (HTMLConstants.HTML_TAG.equals(name)) {
 			// Do nothing
@@ -123,6 +124,7 @@ public class XWPFMapper extends DefaultHandler {
 			newElement = this.handleParagraphStart(atts);
 		} else if (HTMLConstants.STRONG_TAG.equals(name)) {
 			this.handleStrongStart(atts);
+
 		} else if (HTMLConstants.A_TAG.equals(name)) {
 			newElement = this.handleHyperlinkStart(atts);
 		} else if (HTMLConstants.UL_TAG.equals(name)) {
@@ -132,16 +134,34 @@ public class XWPFMapper extends DefaultHandler {
 			newElement.setBullet(true);
 		} else if (HTMLConstants.IMG_TAG.equals(name)) {
 			newElement = this.handleImageStart(atts);
+		} else if (HTMLConstants.BR_TAG.equals(name)) {
+			this.handleLineBreakStart(atts);
 		} else {
 			// development only. Remove before releasing code
-			// throw new XWPFDocumentConversionException(" Unsupported tag: "
-			// + name + ". Implement the tag!");
+		//	throw new XWPFDocumentConversionException(" Unsupported tag: "
+		//			+ name + ". Implement the tag!");
 		}
 
 		if (newElement != null) {
 			this.parsingTree.add(newElement);
 		}
 
+	}
+
+	/**
+	 * This method handles a line break.
+	 * 
+	 * @param atts
+	 *            attributes
+	 */
+	private void handleLineBreakStart(Attributes atts) {
+		ParagraphParsingElement lastParagraph = this.findLastParagraphElement();
+
+		if (lastParagraph == null) {
+			lastParagraph = this.createNewParagraph();
+			this.parsingTree.add(lastParagraph);
+		}
+		lastParagraph.addLineBreak();
 	}
 
 	/**
@@ -316,6 +336,20 @@ public class XWPFMapper extends DefaultHandler {
 	 */
 	private AbstractParsingElement handleParagraphStart(Attributes atts) {
 
+		ParagraphParsingElement paragraph = createNewParagraph();
+
+		this.handleParagraphAttributes(atts, paragraph);
+
+		return paragraph;
+
+	}
+
+	/**
+	 * This method creates new paragraph.
+	 * 
+	 * @return new paragraph
+	 */
+	private ParagraphParsingElement createNewParagraph() {
 		boolean topLevel = (this.currentTopLevelElement == null);
 		AbstractParsingElement containingElement = null;
 
@@ -329,11 +363,7 @@ public class XWPFMapper extends DefaultHandler {
 		if (topLevel) {
 			this.currentTopLevelElement = containingElement;
 		}
-
-		this.handleParagraphAttributes(atts, paragraph);
-
 		return paragraph;
-
 	}
 
 	/**
@@ -432,8 +462,10 @@ public class XWPFMapper extends DefaultHandler {
 	 * @return table cell parsing element
 	 */
 	private AbstractParsingElement handleTableCellStart(Attributes atts) {
+		this.tableCellCounter++;
 		TableCellParsingElement cell = new TableCellParsingElement(
-				this.currentRow.getDocxTableRow(), docxHandler.getDocument());
+				this.currentRow.getDocxTableRow(), docxHandler.getDocument(),
+				this.tableCellCounter);
 		this.handleTableCellAttributes(atts, cell);
 		return cell;
 
@@ -449,7 +481,85 @@ public class XWPFMapper extends DefaultHandler {
 	 */
 	private void handleTableCellAttributes(Attributes atts,
 			TableCellParsingElement cell) {
-		// Do nothing for now
+		for (int i = 0; atts != null && i < atts.getLength(); i++) {
+
+			if (HTMLConstants.HTML_ATTRIBUTE_STYLE.equalsIgnoreCase(atts
+					.getQName(i)) && atts.getValue(i) != null) {
+				String style = atts.getValue(i).toLowerCase();
+
+				String[] styleVariables = style.split(";");
+				String styleVariable = null;
+
+				for (int j = 0; j < styleVariables.length; j++) {
+					try {
+						styleVariable = styleVariables[j];
+						if (styleVariable
+								.contains(HTMLConstants.HTML_ATTRIBUTE_VALUE_WIDTH)) {
+
+							this.handleTableCellWidthHeightAttributes(cell,
+									styleVariable,
+									HTMLConstants.HTML_ATTRIBUTE_VALUE_WIDTH);
+
+						}
+
+						if (styleVariable
+								.contains(HTMLConstants.HTML_ATTRIBUTE_VALUE_HEIGHT)) {
+							this.handleTableCellWidthHeightAttributes(cell,
+									styleVariable,
+									HTMLConstants.HTML_ATTRIBUTE_VALUE_HEIGHT);
+
+						}
+
+					} catch (NumberFormatException nfe) {
+						System.out.println("Unable to parse style: " + style
+								+ " for variable: " + styleVariable);
+					}
+
+				}
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * This method handles table cell width/height attributes.
+	 * 
+	 * @param tableElement
+	 *            table element
+	 * @param styleVariable
+	 *            xhtml width attribute
+	 * @param attributeType
+	 *            attribute type
+	 * 
+	 */
+	private void handleTableCellWidthHeightAttributes(
+			TableCellParsingElement tableElement, String styleVariable,
+			String attributeType) {
+		boolean usePercentage = false;
+		String type = null;
+
+		if (styleVariable.contains(HTMLConstants.HTML_ATTRIBUTE_VALUE_PX)) {
+			type = HTMLConstants.HTML_ATTRIBUTE_VALUE_PX;
+		} else if (styleVariable
+				.contains(HTMLConstants.HTML_ATTRIBUTE_VALUE_PERCENTAGE)) {
+			type = HTMLConstants.HTML_ATTRIBUTE_VALUE_PERCENTAGE;
+			usePercentage = true;
+		} else {
+			throw new XWPFDocumentConversionException("Unknown "
+					+ attributeType + " attribute: " + styleVariable);
+		}
+
+		String number = styleVariable.substring(
+				styleVariable.indexOf(attributeType) + attributeType.length(),
+				styleVariable.indexOf(type));
+		int variable = Integer.parseInt(number);
+		if (HTMLConstants.HTML_ATTRIBUTE_VALUE_WIDTH.equals(attributeType)) {
+			tableElement.setWidth(variable, usePercentage);
+		} else {
+			tableElement.setHeight(variable, usePercentage);
+		}
 	}
 
 	/**
@@ -467,6 +577,7 @@ public class XWPFMapper extends DefaultHandler {
 				docxHandler.getDocument());
 		this.currentRow = row;
 		this.handleTableRowAttributes(atts, row);
+		this.tableCellCounter = 0;
 
 		return row;
 	}
@@ -628,10 +739,19 @@ public class XWPFMapper extends DefaultHandler {
 			this.handleListEnd();
 		} else if (HTMLConstants.IMG_TAG.equals(name)) {
 			this.handleImageEnd();
+		} else if (HTMLConstants.BR_TAG.equals(name)) {
+			this.handleLineBreakEnd();
 		}
 
 		this.currentTextBuffer = null;
 
+	}
+
+	/**
+	 * This method handles line break end.
+	 */
+	private void handleLineBreakEnd() {
+		// Presently, do nothing
 	}
 
 	/**
