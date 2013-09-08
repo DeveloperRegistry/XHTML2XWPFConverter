@@ -35,12 +35,14 @@ public class TableRowParsingElement extends AbstractParsingElement {
 	 * @param docxTable
 	 *            table
 	 * @param document
-	 *            document
+	 *            document	
 	 */
-	public TableRowParsingElement(XWPFTable docxTable, XWPFDocument document) {
+	public TableRowParsingElement(XWPFTable docxTable, XWPFDocument document ) {
 		super(ElementType.TABLE_ROW, false, document);
 		this.docxTable = docxTable;
-		this.docxTableRow = this.docxTable.createRow();
+		//this.docxTableRow = this.docxTable.createRow();
+		this.docxTableRow = this.docxTable.insertNewTableRow( docxTable.getNumberOfRows());
+		
 
 	}
 

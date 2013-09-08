@@ -35,7 +35,6 @@ public class TableCellParsingElement extends AbstractParsingElement {
 
 	private XWPFTableRow docxTableRow;
 	private XWPFTableCell docxTableCell;
-	private int currentCellCount;
 
 	/**
 	 * Constructor
@@ -44,32 +43,13 @@ public class TableCellParsingElement extends AbstractParsingElement {
 	 *            table
 	 * @param document
 	 *            document
-	 * @param currentCellCount
-	 *            current cell count in the particular row
 	 */
 	public TableCellParsingElement(XWPFTableRow docxTableRow,
-			XWPFDocument document, int currentCellCount) {
+			XWPFDocument document) {
 		super(ElementType.TABLE_CELL, false, document);
 		super.setMayContainParagraph(true);
 		this.docxTableRow = docxTableRow;
-		this.currentCellCount = currentCellCount;
-
-		if (this.docxTableRow.getTable().getNumberOfRows() == 1) {
-			this.docxTableCell = this.docxTableRow.createCell();
-		//	System.out.println("Created new cell. Number of rows = 1.");
-		} else {
-
-			this.docxTableCell = this.docxTableRow
-					.getCell(this.currentCellCount - 1);
-		//	System.out.println("Created new cell. Number of rows = "+this.docxTableRow.getTable().getNumberOfRows()+
-		//			"; cell counter = "+this.currentCellCount+"; cell value="+this.docxTableCell);
-		}
-		
-		//Last resort to avoid NPEs
-		if(this.docxTableCell == null )
-		{
-			this.docxTableCell = this.docxTableRow.createCell();
-		}
+		this.docxTableCell = this.docxTableRow.createCell();
 
 	}
 
@@ -155,21 +135,6 @@ public class TableCellParsingElement extends AbstractParsingElement {
 		} else {
 			ctbl.setW(BigInteger.valueOf(Units.toEMU(width)));
 		}
-	}
-
-	/**
-	 * @return the currentCellCount
-	 */
-	public int getCurrentCellCount() {
-		return currentCellCount;
-	}
-
-	/**
-	 * @param currentCellCount
-	 *            the currentCellCount to set
-	 */
-	public void setCurrentCellCount(int currentCellCount) {
-		this.currentCellCount = currentCellCount;
 	}
 
 }

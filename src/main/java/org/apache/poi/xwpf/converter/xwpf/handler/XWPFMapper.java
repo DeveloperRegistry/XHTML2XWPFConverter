@@ -49,7 +49,6 @@ public class XWPFMapper extends DefaultHandler {
 	private TableRowParsingElement currentRow;
 	private StringBuffer currentTextBuffer;
 	private List<AbstractParsingElement> parsingTree;
-	private int tableCellCounter;
 
 	/**
 	 * Private constructor to prevent initialization.
@@ -108,7 +107,7 @@ public class XWPFMapper extends DefaultHandler {
 		this.currentTextBuffer = new StringBuffer();
 		AbstractParsingElement newElement = null;
 
-	//	System.out.println("Element: " + name);
+		// System.out.println("Element: " + name);
 
 		if (HTMLConstants.HTML_TAG.equals(name)) {
 			// Do nothing
@@ -138,8 +137,8 @@ public class XWPFMapper extends DefaultHandler {
 			this.handleLineBreakStart(atts);
 		} else {
 			// development only. Remove before releasing code
-		//	throw new XWPFDocumentConversionException(" Unsupported tag: "
-		//			+ name + ". Implement the tag!");
+			// throw new XWPFDocumentConversionException(" Unsupported tag: "
+			// + name + ". Implement the tag!");
 		}
 
 		if (newElement != null) {
@@ -462,10 +461,8 @@ public class XWPFMapper extends DefaultHandler {
 	 * @return table cell parsing element
 	 */
 	private AbstractParsingElement handleTableCellStart(Attributes atts) {
-		this.tableCellCounter++;
 		TableCellParsingElement cell = new TableCellParsingElement(
-				this.currentRow.getDocxTableRow(), docxHandler.getDocument(),
-				this.tableCellCounter);
+				this.currentRow.getDocxTableRow(), docxHandler.getDocument());
 		this.handleTableCellAttributes(atts, cell);
 		return cell;
 
@@ -577,8 +574,6 @@ public class XWPFMapper extends DefaultHandler {
 				docxHandler.getDocument());
 		this.currentRow = row;
 		this.handleTableRowAttributes(atts, row);
-		this.tableCellCounter = 0;
-
 		return row;
 	}
 
