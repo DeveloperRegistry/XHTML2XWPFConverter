@@ -14,6 +14,10 @@
 package org.apache.poi.xwpf.converter.xwpf.bo;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.converter.xwpf.common.ElementType;
@@ -32,6 +36,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageSz;
 public class TableParsingElement extends AbstractParsingElement {
 
 	private XWPFTable docxTable;
+	private Map<Integer, ArrayList<TableCellParsingElement>> rowSpanCells = Collections
+			.synchronizedMap(new HashMap<Integer, ArrayList<TableCellParsingElement>>());
 
 	/**
 	 * Constructor
@@ -138,4 +144,113 @@ public class TableParsingElement extends AbstractParsingElement {
 		}
 
 	}
+
+	/**
+	 * This method adds row span cell information to the rowspan collection.
+	 * 
+	 * @param rowNum
+	 *            row number
+	 * @param startingCell
+	 *            first cell in the row span
+	 */
+	public void addRowSpanCell(int rowNum, TableCellParsingElement startingCell) {
+		Integer key = new Integer(rowNum);
+		ArrayList<TableCellParsingElement> values = this.rowSpanCells.get(key);
+
+		if (values == null) {
+			values = new ArrayList<TableCellParsingElement>();
+		}
+
+		if (!values.contains(startingCell)) {
+			values.add(startingCell);
+		}
+		this.rowSpanCells.put(key, values);
+
+		// TODO: remove
+		System.out.println("Added new row span cell to the map at: " + key
+				+ " with values: " + values.toArray());
+	}
+
+	/**
+	 * This method checks if row span collection contains a cell in a particular
+	 * position.
+	 * 
+	 * @param rowNum
+	 *            row number
+	 * @param cellNum
+	 *            cell number
+	 * @return if true, contains a cell in a particular position
+	 */
+	public boolean containsRowCellAtPosition(int rowNum, int cellNum) {
+		boolean result = false;
+
+		Integer key = new Integer(rowNum);
+
+		ArrayList<TableCellParsingElement> values = this.rowSpanCells.get(key);
+
+		if (values != null) {
+
+			for (TableCellParsingElement cell : values) {
+				if (cell.getRowSpanCellNumber() == cellNum) {
+					result = true;
+					break;
+				}
+			}
+		}
+
+		// TODO: remove
+		System.out.println("Checking if has rowspan at rowNum: " + rowNum
+				+ " with cellNum: " + cellNum + "; result = " + result);
+
+		return result;
+	}
+
+	/**
+	 * This method returns first row span cell so it could be used as a template
+	 * for next cells.
+	 * 
+	 * @param rowNum
+	 *            row number
+	 * @param cellNum
+	 *            cell number
+	 * @return first row span cell
+	 */
+	public TableCellParsingElement getFirstRowSpanCell(int rowNum, int cellNum) {
+		TableCellParsingElement result = null;
+
+		Integer key = new Integer(rowNum);
+
+		ArrayList<TableCellParsingElement> values = this.rowSpanCells.get(key);
+
+		for (TableCellParsingElement cell : values) {
+			if (cell.getRowSpanCellNumber() == cellNum) {
+				result = cell;
+				break;
+			}
+		}
+
+		// TODO: remove
+		System.out
+				.println("??? Found starting rowspan cell at rowNum: " + rowNum
+						+ " with cellNum: " + cellNum + "; result = " + result);
+
+		return result;
+	}
+
+	/**
+	 * @return the rowSpanCells
+	 */
+	public Map<Integer, ArrayList<TableCellParsingElement>> getRowSpanCells() {
+		return rowSpanCells;
+	}
+
+	/**
+	 * @param rowSpanCells
+	 *            the rowSpanCells to set
+	 */
+	public void setRowSpanCells(
+			Map<Integer, ArrayList<TableCellParsingElement>> rowSpanCells) {
+		this.rowSpanCells = rowSpanCells;
+	}
+
 }

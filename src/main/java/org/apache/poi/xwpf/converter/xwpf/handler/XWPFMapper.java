@@ -107,7 +107,7 @@ public class XWPFMapper extends DefaultHandler {
 		this.currentTextBuffer = new StringBuffer();
 		AbstractParsingElement newElement = null;
 
-		// System.out.println("Element: " + name);
+		System.out.println("Element: " + name);
 
 		if (HTMLConstants.HTML_TAG.equals(name)) {
 			// Do nothing
@@ -462,7 +462,7 @@ public class XWPFMapper extends DefaultHandler {
 	 */
 	private AbstractParsingElement handleTableCellStart(Attributes atts) {
 		TableCellParsingElement cell = new TableCellParsingElement(
-				this.currentRow.getDocxTableRow(), docxHandler.getDocument());
+				this.currentRow, docxHandler.getDocument());
 		this.handleTableCellAttributes(atts, cell);
 		return cell;
 
@@ -479,45 +479,106 @@ public class XWPFMapper extends DefaultHandler {
 	private void handleTableCellAttributes(Attributes atts,
 			TableCellParsingElement cell) {
 		for (int i = 0; atts != null && i < atts.getLength(); i++) {
+			
+			System.out.println(" Handling "+atts
+					.getQName(i)+" with value: "+atts.getValue(i));
 
 			if (HTMLConstants.HTML_ATTRIBUTE_STYLE.equalsIgnoreCase(atts
 					.getQName(i)) && atts.getValue(i) != null) {
 				String style = atts.getValue(i).toLowerCase();
+				this.handleStyleTableCellAttributes(cell, style);
 
-				String[] styleVariables = style.split(";");
-				String styleVariable = null;
+			}
 
-				for (int j = 0; j < styleVariables.length; j++) {
-					try {
-						styleVariable = styleVariables[j];
-						if (styleVariable
-								.contains(HTMLConstants.HTML_ATTRIBUTE_VALUE_WIDTH)) {
+			if (HTMLConstants.HTML_ATTRIBUTE_COLSPAN.equalsIgnoreCase(atts
+					.getQName(i)) && atts.getValue(i) != null) {
+				String colspan = atts.getValue(i).toLowerCase();
+				this.handleColSpanTableCellAttributes(cell, colspan);
 
-							this.handleTableCellWidthHeightAttributes(cell,
-									styleVariable,
-									HTMLConstants.HTML_ATTRIBUTE_VALUE_WIDTH);
+			}
 
-						}
-
-						if (styleVariable
-								.contains(HTMLConstants.HTML_ATTRIBUTE_VALUE_HEIGHT)) {
-							this.handleTableCellWidthHeightAttributes(cell,
-									styleVariable,
-									HTMLConstants.HTML_ATTRIBUTE_VALUE_HEIGHT);
-
-						}
-
-					} catch (NumberFormatException nfe) {
-						System.out.println("Unable to parse style: " + style
-								+ " for variable: " + styleVariable);
-					}
-
-				}
+			if (HTMLConstants.HTML_ATTRIBUTE_ROWSPAN.equalsIgnoreCase(atts
+					.getQName(i)) && atts.getValue(i) != null) {
+				String rowspan = atts.getValue(i).toLowerCase();
+				this.handleRowSpanTableCellAttributes(cell, rowspan);
 
 			}
 
 		}
 
+	}
+
+	/**
+	 * This method handles table cell rowspan attribute
+	 * 
+	 * @param cell
+	 *            parsing element
+	 * @param rowspan
+	 *            row span
+	 */
+	private void handleRowSpanTableCellAttributes(TableCellParsingElement cell,
+			String rowspan) {
+		int rowSpan = Integer.parseInt(rowspan);
+		cell.setRowSpan(rowSpan);
+
+	}
+
+	/**
+	 * This method handles table cell colspan attribute
+	 * 
+	 * @param cell
+	 *            parsing element
+	 * @param colspan
+	 *            column span
+	 */
+	private void handleColSpanTableCellAttributes(TableCellParsingElement cell,
+			String colspan) {
+
+		int columnSpan = Integer.parseInt(colspan);
+		cell.setColumnSpan(columnSpan);
+
+	}
+
+	/**
+	 * This method handles Style table cell (TD) attributes.
+	 * 
+	 * @param cell
+	 *            parsing element
+	 * @param style
+	 *            style
+	 */
+	private void handleStyleTableCellAttributes(TableCellParsingElement cell,
+			String style) {
+
+		String[] styleVariables = style.split(";");
+		String styleVariable = null;
+
+		for (int j = 0; j < styleVariables.length; j++) {
+			try {
+				styleVariable = styleVariables[j];
+				if (styleVariable
+						.contains(HTMLConstants.HTML_ATTRIBUTE_VALUE_WIDTH)) {
+
+					this.handleTableCellWidthHeightAttributes(cell,
+							styleVariable,
+							HTMLConstants.HTML_ATTRIBUTE_VALUE_WIDTH);
+
+				}
+
+				if (styleVariable
+						.contains(HTMLConstants.HTML_ATTRIBUTE_VALUE_HEIGHT)) {
+					this.handleTableCellWidthHeightAttributes(cell,
+							styleVariable,
+							HTMLConstants.HTML_ATTRIBUTE_VALUE_HEIGHT);
+
+				}
+
+			} catch (NumberFormatException nfe) {
+				System.out.println("Unable to parse style: " + style
+						+ " for variable: " + styleVariable);
+			}
+
+		}
 	}
 
 	/**
@@ -569,8 +630,7 @@ public class XWPFMapper extends DefaultHandler {
 	private AbstractParsingElement handleTableRowStart(Attributes atts) {
 
 		TableRowParsingElement row = new TableRowParsingElement(
-				((TableParsingElement) this.currentTopLevelElement)
-						.getDocxTable(),
+				((TableParsingElement) this.currentTopLevelElement),
 				docxHandler.getDocument());
 		this.currentRow = row;
 		this.handleTableRowAttributes(atts, row);

@@ -36,6 +36,8 @@ public class HTMLConstants {
 
 	public static final String HTML_ATTRIBUTE_BORDER = "border";
 	public static final String HTML_ATTRIBUTE_STYLE = "style";
+	public static final String HTML_ATTRIBUTE_COLSPAN = "colspan";
+	public static final String HTML_ATTRIBUTE_ROWSPAN = "rowspan";
 	public static final String HTML_ATTRIBUTE_CELLPADDING = "cellpadding";
 	public static final String HTML_ATTRIBUTE_HREF = "href";
 	public static final String HTML_ATTRIBUTE_SRC = "src";

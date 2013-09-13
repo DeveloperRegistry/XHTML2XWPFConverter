@@ -111,7 +111,7 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 														// the paragraph
 		run.setBold(this.isStrong());
 		run.setText(para);
-	//	System.out.println("Set text: "+para);
+		System.out.println("Set text: "+para);
 
 	}
 

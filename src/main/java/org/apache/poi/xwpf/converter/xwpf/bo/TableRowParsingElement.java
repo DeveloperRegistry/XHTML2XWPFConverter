@@ -28,22 +28,26 @@ public class TableRowParsingElement extends AbstractParsingElement {
 
 	private XWPFTable docxTable;
 	private XWPFTableRow docxTableRow;
+	private TableParsingElement tableParsingElement;
 
 	/**
 	 * Constructor
 	 * 
-	 * @param docxTable
-	 *            table
+	 * @param tableParsingElement
+	 *            table parsing element
 	 * @param document
-	 *            document	
+	 *            document
 	 */
-	public TableRowParsingElement(XWPFTable docxTable, XWPFDocument document ) {
+	public TableRowParsingElement(TableParsingElement tableParsingElement,
+			XWPFDocument document) {
 		super(ElementType.TABLE_ROW, false, document);
-		this.docxTable = docxTable;
-		//this.docxTableRow = this.docxTable.createRow();
-		this.docxTableRow = this.docxTable.insertNewTableRow( docxTable.getNumberOfRows());
-		
-
+		this.tableParsingElement = tableParsingElement;
+		this.docxTable = tableParsingElement.getDocxTable();
+		System.out.println("Creating new row at position: "
+				+ tableParsingElement.getDocxTable().getNumberOfRows());
+		this.docxTableRow = this.docxTable
+				.insertNewTableRow(tableParsingElement.getDocxTable()
+						.getNumberOfRows());
 	}
 
 	/**
@@ -74,6 +78,21 @@ public class TableRowParsingElement extends AbstractParsingElement {
 	 */
 	public void setDocxTableRow(XWPFTableRow docxTableRow) {
 		this.docxTableRow = docxTableRow;
+	}
+
+	/**
+	 * @return the tableParsingElement
+	 */
+	public TableParsingElement getTableParsingElement() {
+		return tableParsingElement;
+	}
+
+	/**
+	 * @param tableParsingElement
+	 *            the tableParsingElement to set
+	 */
+	public void setTableParsingElement(TableParsingElement tableParsingElement) {
+		this.tableParsingElement = tableParsingElement;
 	}
 
 }
