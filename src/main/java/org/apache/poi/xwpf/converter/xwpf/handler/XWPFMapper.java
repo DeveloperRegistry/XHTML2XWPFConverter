@@ -107,7 +107,7 @@ public class XWPFMapper extends DefaultHandler {
 		this.currentTextBuffer = new StringBuffer();
 		AbstractParsingElement newElement = null;
 
-		System.out.println("Element: " + name);
+		//System.out.println("Element: " + name);
 
 		if (HTMLConstants.HTML_TAG.equals(name)) {
 			// Do nothing
@@ -480,8 +480,8 @@ public class XWPFMapper extends DefaultHandler {
 			TableCellParsingElement cell) {
 		for (int i = 0; atts != null && i < atts.getLength(); i++) {
 			
-			System.out.println(" Handling "+atts
-					.getQName(i)+" with value: "+atts.getValue(i));
+		//	System.out.println(" Handling "+atts
+		//			.getQName(i)+" with value: "+atts.getValue(i));
 
 			if (HTMLConstants.HTML_ATTRIBUTE_STYLE.equalsIgnoreCase(atts
 					.getQName(i)) && atts.getValue(i) != null) {

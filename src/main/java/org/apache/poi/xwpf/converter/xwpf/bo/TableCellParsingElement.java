@@ -15,8 +15,9 @@ package org.apache.poi.xwpf.converter.xwpf.bo;
 
 import java.math.BigInteger;
 
-import org.apache.poi.util.Units;
+import org.apache.poi.xwpf.converter.xwpf.common.ConversionUtil;
 import org.apache.poi.xwpf.converter.xwpf.common.ElementType;
+import org.apache.poi.xwpf.converter.xwpf.common.HTMLConstants;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
@@ -45,6 +46,7 @@ public class TableCellParsingElement extends AbstractParsingElement {
 	private int rowSpanCellNumber;
 	private CTDecimalNumber gridSpan;
 	private CTTblWidth cTTblWidth;
+	private CTTcPr cTTcPr;
 
 	/**
 	 * @return the rowSpanCellNumber
@@ -79,7 +81,13 @@ public class TableCellParsingElement extends AbstractParsingElement {
 		this.addRowSpanCellIfNeeded();
 
 		this.docxTableCell = this.docxTableRow.createCell();
-		System.out.println("Created new CELL");
+		CTTc cttc = docxTableCell.getCTTc();
+		this.cTTcPr = cttc.getTcPr();
+		if (this.cTTcPr == null) {
+			this.cTTcPr = cttc.addNewTcPr();
+		}
+		this.createVisibleBorder(this.cTTcPr, HTMLConstants.COLOR_GREY);
+		//System.out.println("Created new CELL");
 
 	}
 
@@ -87,36 +95,32 @@ public class TableCellParsingElement extends AbstractParsingElement {
 	 * This method adds row span cell if needed.
 	 */
 	private void addRowSpanCellIfNeeded() {
-		 int rowNum = this.docxTableRow.getTable().getNumberOfRows();
-		 int cellNum = this.docxTableRow.getTableCells().size();
+		int rowNum = this.docxTableRow.getTable().getNumberOfRows();
+		int cellNum = this.docxTableRow.getTableCells().size();
 		if (this.tableRowParsingElement.getTableParsingElement()
-				.containsRowCellAtPosition(
-						rowNum,
-						cellNum)) {
-			// TODO: remove
-			System.out.println("Creating new rowspan cell at positions:"
-					+ this.docxTableRow.getTable().getNumberOfRows() + "; "
-					+ this.docxTableRow.getTableCells().size());
-			XWPFTableCell rowSpanCell = this.docxTableRow.createCell();
-			// TODO: remove
-			rowSpanCell.setText("Row span cell");
-			
-			TableCellParsingElement firstRowSpanCell = this.tableRowParsingElement.getTableParsingElement().getFirstRowSpanCell(rowNum, cellNum);
+				.containsRowCellAtPosition(rowNum, cellNum)) {
 
-			// TODO: set width and height from the mother cell
+			// System.out.println("Creating new rowspan cell at positions:"
+			// + this.docxTableRow.getTable().getNumberOfRows() + "; "
+			// + this.docxTableRow.getTableCells().size());
+			XWPFTableCell rowSpanCell = this.docxTableRow.createCell();
+
+			TableCellParsingElement firstRowSpanCell = this.tableRowParsingElement
+					.getTableParsingElement().getFirstRowSpanCell(rowNum,
+							cellNum);
+
 			CTTc cttc = rowSpanCell.getCTTc();
 			CTTcPr pr = cttc.getTcPr();
 			if (pr == null) {
 				pr = cttc.addNewTcPr();
 			}
-			
-			if( firstRowSpanCell.getcTTblWidth() != null )
-			{
+
+			if (firstRowSpanCell.getcTTblWidth() != null) {
 				pr.setTcW(firstRowSpanCell.getcTTblWidth());
+
 			}
-			
-			if( firstRowSpanCell.getGridSpan() != null  )
-			{
+
+			if (firstRowSpanCell.getGridSpan() != null) {
 				pr.setGridSpan(firstRowSpanCell.getGridSpan());
 			}
 
@@ -126,11 +130,34 @@ public class TableCellParsingElement extends AbstractParsingElement {
 			}
 
 			merge.setVal(STMerge.CONTINUE);
-			// TODO: remove
-		//	CTTcBorders borders = pr.addNewTcBorders();
-		//	CTBorder border = borders.addNewTl2Br();
-		//	border.setVal(STBorder.DOUBLE);
+
+			this.createVisibleBorder(pr, HTMLConstants.COLOR_GREY);
+
 		}
+	}
+
+	/**
+	 * This class creates visible border. The default color is grey.
+	 * 
+	 * @param pr
+	 *            CTTcPr
+	 * @param color
+	 *            HTML color to use
+	 */
+	private void createVisibleBorder(CTTcPr pr, String color) {
+		CTTcBorders borders = pr.addNewTcBorders();
+		CTBorder border = borders.addNewBottom();
+		border.setVal(STBorder.THICK);
+		border.setColor(color);
+		CTBorder border1 = borders.addNewLeft();
+		border1.setVal(STBorder.THICK);
+		border1.setColor(color);
+		CTBorder border2 = borders.addNewRight();
+		border2.setVal(STBorder.THICK);
+		border2.setColor(color);
+		CTBorder border3 = borders.addNewTop();
+		border3.setVal(STBorder.THICK);
+		border3.setColor(color);
 	}
 
 	/**
@@ -195,14 +222,14 @@ public class TableCellParsingElement extends AbstractParsingElement {
 	public void setWidth(int width, boolean usePercentage) {
 
 		CTTc cttc = this.docxTableCell.getCTTc();
-		CTTcPr pr = cttc.getTcPr();
-		if (pr == null) {
-			pr = cttc.addNewTcPr();
+		this.cTTcPr = cttc.getTcPr();
+		if (this.cTTcPr == null) {
+			this.cTTcPr = cttc.addNewTcPr();
 		}
 
-		this.cTTblWidth = pr.getTcW();
+		this.cTTblWidth = this.cTTcPr.getTcW();
 		if (cTTblWidth == null) {
-			cTTblWidth = pr.addNewTcW();
+			cTTblWidth = this.cTTcPr.addNewTcW();
 		}
 
 		if (usePercentage) {
@@ -213,7 +240,8 @@ public class TableCellParsingElement extends AbstractParsingElement {
 			cTTblWidth.setW(BigInteger.valueOf(tableWidth));
 
 		} else {
-			cTTblWidth.setW(BigInteger.valueOf(Units.toEMU(width)));
+			cTTblWidth.setW(BigInteger.valueOf(ConversionUtil
+					.convertTableCellPixelsToWidthUnits(width)));
 		}
 	}
 
@@ -225,15 +253,15 @@ public class TableCellParsingElement extends AbstractParsingElement {
 	 */
 	public void setColumnSpan(int columnSpan) {
 		CTTc cttc = this.docxTableCell.getCTTc();
-		CTTcPr pr = cttc.getTcPr();
-		if (pr == null) {
-			pr = cttc.addNewTcPr();
+		this.cTTcPr = cttc.getTcPr();
+		if (this.cTTcPr == null) {
+			this.cTTcPr = cttc.addNewTcPr();
 		}
 
-		this.gridSpan = pr.getGridSpan();
+		this.gridSpan = this.cTTcPr.getGridSpan();
 
 		if (gridSpan == null) {
-			gridSpan = pr.addNewGridSpan();
+			gridSpan = this.cTTcPr.addNewGridSpan();
 		}
 		gridSpan.setVal(BigInteger.valueOf(columnSpan));
 
@@ -256,14 +284,14 @@ public class TableCellParsingElement extends AbstractParsingElement {
 						.addRowSpanCell((currentRow + i), this);
 			}
 			CTTc cttc = this.docxTableCell.getCTTc();
-			CTTcPr pr = cttc.getTcPr();
-			if (pr == null) {
-				pr = cttc.addNewTcPr();
+			this.cTTcPr = cttc.getTcPr();
+			if (this.cTTcPr == null) {
+				this.cTTcPr = cttc.addNewTcPr();
 			}
 
-			CTVMerge merge = pr.getVMerge();
+			CTVMerge merge = this.cTTcPr.getVMerge();
 			if (merge == null) {
-				merge = pr.addNewVMerge();
+				merge = this.cTTcPr.addNewVMerge();
 			}
 
 			merge.setVal(STMerge.RESTART);
@@ -315,6 +343,21 @@ public class TableCellParsingElement extends AbstractParsingElement {
 	 */
 	public void setcTTblWidth(CTTblWidth cTTblWidth) {
 		this.cTTblWidth = cTTblWidth;
+	}
+
+	/**
+	 * @return the cTTcPr
+	 */
+	public CTTcPr getcTTcPr() {
+		return cTTcPr;
+	}
+
+	/**
+	 * @param cTTcPr
+	 *            the cTTcPr to set
+	 */
+	public void setcTTcPr(CTTcPr cTTcPr) {
+		this.cTTcPr = cTTcPr;
 	}
 
 }

@@ -92,7 +92,7 @@ public class TableParsingElement extends AbstractParsingElement {
 			borderToUse = XWPFBorderType.THICK;
 		}
 		if (visible) {
-			color = HTMLConstants.COLOR_BLACK;
+			color = HTMLConstants.COLOR_GREY;
 		}
 		// System.out.println("setBorder. visible=" + visible + "; thick=" +
 		// thick
@@ -166,9 +166,8 @@ public class TableParsingElement extends AbstractParsingElement {
 		}
 		this.rowSpanCells.put(key, values);
 
-		// TODO: remove
-		System.out.println("Added new row span cell to the map at: " + key
-				+ " with values: " + values.toArray());
+		// System.out.println("Added new row span cell to the map at: " + key
+		// + " with values: " + values.toArray());
 	}
 
 	/**
@@ -198,9 +197,8 @@ public class TableParsingElement extends AbstractParsingElement {
 			}
 		}
 
-		// TODO: remove
-		System.out.println("Checking if has rowspan at rowNum: " + rowNum
-				+ " with cellNum: " + cellNum + "; result = " + result);
+		// System.out.println("Checking if has rowspan at rowNum: " + rowNum
+		// + " with cellNum: " + cellNum + "; result = " + result);
 
 		return result;
 	}
@@ -228,11 +226,6 @@ public class TableParsingElement extends AbstractParsingElement {
 				break;
 			}
 		}
-
-		// TODO: remove
-		System.out
-				.println("??? Found starting rowspan cell at rowNum: " + rowNum
-						+ " with cellNum: " + cellNum + "; result = " + result);
 
 		return result;
 	}

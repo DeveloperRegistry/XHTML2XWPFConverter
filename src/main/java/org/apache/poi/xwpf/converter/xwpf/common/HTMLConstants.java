@@ -52,5 +52,7 @@ public class HTMLConstants {
 	public static final String COLOR_BLACK = "FF0000";
 	public static final String COLOR_WHITE = "FFFFFF";
 	public static final String COLOR_HYPERLINK_BLUE = "0000FF";
+	public static final String COLOR_GREY = "CCCCCC";
+	
 
 }

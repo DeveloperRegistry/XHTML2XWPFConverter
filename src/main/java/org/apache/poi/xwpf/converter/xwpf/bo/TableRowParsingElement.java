@@ -43,8 +43,8 @@ public class TableRowParsingElement extends AbstractParsingElement {
 		super(ElementType.TABLE_ROW, false, document);
 		this.tableParsingElement = tableParsingElement;
 		this.docxTable = tableParsingElement.getDocxTable();
-		System.out.println("Creating new row at position: "
-				+ tableParsingElement.getDocxTable().getNumberOfRows());
+		//System.out.println("Creating new row at position: "
+		//		+ tableParsingElement.getDocxTable().getNumberOfRows());
 		this.docxTableRow = this.docxTable
 				.insertNewTableRow(tableParsingElement.getDocxTable()
 						.getNumberOfRows());
