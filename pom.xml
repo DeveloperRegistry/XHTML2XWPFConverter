@@ -3,6 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.apache.poi.xhtml</groupId>
 	<artifactId>XHTML2XWPFConverter</artifactId>
+	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>XHTML2XWPFConverter</name>
 	<description>XHTML to Word Document Converter</description>
