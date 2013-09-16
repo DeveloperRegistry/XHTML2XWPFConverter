@@ -78,5 +78,18 @@ public class XHTML2XWPFConverterTestCase {
 				DataAccess.class.getResourceAsStream("cv.xhtml"), out, null);
 		Assert.assertTrue(outFile.exists());
 	}
+	
+	@Test
+	public void testCVWithHyperlinkConversionWithOutputToFile() throws Exception {
+
+		File outFile = new File("target/test_hyperlink_text.docx");
+		outFile.getParentFile().mkdirs();
+
+		OutputStream out = new FileOutputStream(outFile);
+
+		XHTML2XWPFConverter.getInstance().convert(
+				DataAccess.class.getResourceAsStream("test_hyperlink_text.xhtml"), out, null);
+		Assert.assertTrue(outFile.exists());
+	}
 
 }

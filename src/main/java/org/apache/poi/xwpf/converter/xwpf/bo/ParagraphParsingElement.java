@@ -66,6 +66,11 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 			this.docxParagraph = cell.getDocxTableCell().addParagraph();
 
 		}
+		// System.out.println("Created paragraph: "
+		// + this.docxParagraph
+		// + "; containingElement: "
+		// + ((this.containingElement != null) ? this.containingElement
+		// .getType() : ""));
 	}
 
 	/**
@@ -104,14 +109,13 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 			CTPPr ppr = this.docxParagraph.getCTP().addNewPPr();
 			CTString style = ppr.addNewPStyle();
 			style.setVal(StyleConstants.LIST_PARAGRAPH);
-
 		}
 
 		XWPFRun run = this.docxParagraph.createRun(); // create run object in
 														// the paragraph
 		run.setBold(this.isStrong());
 		run.setText(para);
-		//System.out.println("Set text: "+para);
+		//System.out.println("Created new run for paragraph: " + para);
 
 	}
 

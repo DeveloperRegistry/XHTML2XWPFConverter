@@ -115,6 +115,8 @@ public class HyperlinkParsingElement extends AbstractParsingElement {
 		run.setBold(this.isStrong());	
 		run.setColor(HTMLConstants.COLOR_HYPERLINK_BLUE);
 		run.setText(paragraphData.toString());
+		
+		//System.out.println("Created new run for hyperlink on paragraph: "+this.paragraphParsingElement);
 
 	}
 

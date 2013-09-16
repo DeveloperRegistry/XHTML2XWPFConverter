@@ -104,7 +104,7 @@ public class XWPFMapper extends DefaultHandler {
 			Attributes atts) {
 
 		name = this.normalizeName(name);
-		this.currentTextBuffer = new StringBuffer();
+		this.flushStringBuffer();
 		AbstractParsingElement newElement = null;
 
 		//System.out.println("Element: " + name);
@@ -479,9 +479,9 @@ public class XWPFMapper extends DefaultHandler {
 	private void handleTableCellAttributes(Attributes atts,
 			TableCellParsingElement cell) {
 		for (int i = 0; atts != null && i < atts.getLength(); i++) {
-			
-		//	System.out.println(" Handling "+atts
-		//			.getQName(i)+" with value: "+atts.getValue(i));
+
+			// System.out.println(" Handling "+atts
+			// .getQName(i)+" with value: "+atts.getValue(i));
 
 			if (HTMLConstants.HTML_ATTRIBUTE_STYLE.equalsIgnoreCase(atts
 					.getQName(i)) && atts.getValue(i) != null) {
@@ -768,13 +768,7 @@ public class XWPFMapper extends DefaultHandler {
 
 		name = this.normalizeName(name);
 
-		if (this.currentTextBuffer != null
-				&& this.currentTextBuffer.length() > 0) {
-			AbstractParsingElement lastElementThatMayContainText = this
-					.findLastMayContainTextElement();
-			lastElementThatMayContainText
-					.setParagraphData(this.currentTextBuffer);
-		}
+		this.flushStringBuffer();
 
 		if (HTMLConstants.HTML_TAG.equals(name)) {
 			// Do nothing
@@ -798,8 +792,23 @@ public class XWPFMapper extends DefaultHandler {
 			this.handleLineBreakEnd();
 		}
 
-		this.currentTextBuffer = null;
+	}
 
+	/**
+	 * This method flushes string buffer by moving data to the correct
+	 * paragraph.
+	 */
+	private void flushStringBuffer() {		
+		if (this.currentTextBuffer != null
+				&& this.currentTextBuffer.length() > 0) {
+			AbstractParsingElement lastElementThatMayContainText = this
+					.findLastMayContainTextElement();
+			if (lastElementThatMayContainText != null) {
+				lastElementThatMayContainText
+						.setParagraphData(this.currentTextBuffer);
+			}
+			this.currentTextBuffer = null;
+		}
 	}
 
 	/**
@@ -871,6 +880,8 @@ public class XWPFMapper extends DefaultHandler {
 
 	@Override
 	public final void characters(char ch[], int start, int length) {
+		
+		//System.out.println("Current string buffer: " + this.currentTextBuffer);
 
 		if (this.currentTextBuffer == null) {
 			this.currentTextBuffer = new StringBuffer();
@@ -880,6 +891,9 @@ public class XWPFMapper extends DefaultHandler {
 			this.currentTextBuffer.append(ch[i]);
 
 		}
+		
+		//System.out.println("Populated string buffer to: "
+		//		+ this.currentTextBuffer);
 	}
 
 	/**

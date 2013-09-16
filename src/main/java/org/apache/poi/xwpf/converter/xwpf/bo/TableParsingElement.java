@@ -26,6 +26,8 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTable.XWPFBorderType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageSz;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblPr;
 
 /**
  * This class encapsulates a table parsing element.
@@ -50,12 +52,23 @@ public class TableParsingElement extends AbstractParsingElement {
 	public TableParsingElement(boolean topLevelElement, XWPFDocument document) {
 		super(ElementType.TABLE, topLevelElement, document);
 		docxTable = document.createTable();
-
+		
 		// Remove default rows
 		for (int i = 0; i <= docxTable.getNumberOfRows(); i++) {
 			docxTable.removeRow(i);
 		}
-
+				
+		//Initialize critical table elements
+		if( docxTable.getCTTbl() != null && docxTable.getCTTbl().getTblGrid() == null )
+		{
+			docxTable.getCTTbl().addNewTblGrid();
+			docxTable.getCTTbl().getTblGrid().addNewGridCol();
+		}
+		
+		if( docxTable.getCTTbl() != null && docxTable.getCTTbl().getTblPr() == null )
+		{
+			docxTable.getCTTbl().addNewTblPr();			
+		}
 	}
 
 	/**
