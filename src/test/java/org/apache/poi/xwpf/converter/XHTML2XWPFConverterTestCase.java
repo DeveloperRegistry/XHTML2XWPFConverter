@@ -117,5 +117,18 @@ public class XHTML2XWPFConverterTestCase {
 				DataAccess.class.getResourceAsStream("advanced_cv.xhtml"), out, null);
 		Assert.assertTrue(outFile.exists());
 	}
+	
+	@Test
+	public void testAdvancedTableSubsetWithOutputToFile() throws Exception {
+
+		File outFile = new File("target/advanced_table_subset.docx");
+		outFile.getParentFile().mkdirs();
+
+		OutputStream out = new FileOutputStream(outFile);
+
+		XHTML2XWPFConverter.getInstance().convert(
+				DataAccess.class.getResourceAsStream("advanced_table_subset.xhtml"), out, null);
+		Assert.assertTrue(outFile.exists());
+	}
 
 }

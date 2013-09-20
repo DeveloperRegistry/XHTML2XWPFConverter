@@ -107,7 +107,7 @@ public class XWPFMapper extends DefaultHandler {
 		this.flushStringBuffer();
 		AbstractParsingElement newElement = null;
 
-		// System.out.println("Element: " + name);
+		//System.out.println("Element: " + name);
 
 		if (HTMLConstants.HTML_TAG.equals(name)) {
 			// Do nothing
@@ -115,15 +115,20 @@ public class XWPFMapper extends DefaultHandler {
 			newElement = this.handleTableStart(atts);
 		} else if (HTMLConstants.TBODY_TAG.equals(name)) {
 			// Do nothing. Not needed in DocX
+		} else if (HTMLConstants.THEAD_TAG.equals(name)) {
+			// Do nothing. Not needed in DocX
+		} else if (HTMLConstants.TFOOT_TAG.equals(name)) {
+			// Do nothing. Not needed in DocX
 		} else if (HTMLConstants.TR_TAG.equals(name)) {
 			newElement = this.handleTableRowStart(atts);
 		} else if (HTMLConstants.TD_TAG.equals(name)) {
+			newElement = this.handleTableCellStart(atts);
+		} else if (HTMLConstants.TH_TAG.equals(name)) {
 			newElement = this.handleTableCellStart(atts);
 		} else if (HTMLConstants.P_TAG.equals(name)) {
 			newElement = this.handleParagraphStart(atts);
 		} else if (HTMLConstants.STRONG_TAG.equals(name)) {
 			this.handleStrongStart(atts);
-
 		} else if (HTMLConstants.A_TAG.equals(name)) {
 			newElement = this.handleHyperlinkStart(atts);
 		} else if (HTMLConstants.UL_TAG.equals(name)) {
@@ -794,9 +799,15 @@ public class XWPFMapper extends DefaultHandler {
 			this.handleTableEnd();
 		} else if (HTMLConstants.TBODY_TAG.equals(name)) {
 			// Do nothing. Not needed in DocX
+		} else if (HTMLConstants.THEAD_TAG.equals(name)) {
+			// Do nothing. Not needed in DocX
+		} else if (HTMLConstants.TFOOT_TAG.equals(name)) {
+			// Do nothing. Not needed in DocX
 		} else if (HTMLConstants.TR_TAG.equals(name)) {
 			this.handleTableRowEnd();
 		} else if (HTMLConstants.TD_TAG.equals(name)) {
+			this.handleTableCellEnd();
+		} else if (HTMLConstants.TH_TAG.equals(name)) {
 			this.handleTableCellEnd();
 		} else if (HTMLConstants.P_TAG.equals(name)) {
 			this.handleParagraphEnd();
