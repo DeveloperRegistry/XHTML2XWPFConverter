@@ -38,8 +38,8 @@ public class ImageParsingElement extends AbstractParsingElement {
 	private ParagraphParsingElement paragraphParsingElement;
 	private int pictureType;
 	private String filePath;
-	private int width;
-	private int height;
+	private double width;
+	private double height;
 	private boolean webBasedProcessing;
 
 	/**
@@ -110,7 +110,7 @@ public class ImageParsingElement extends AbstractParsingElement {
 	/**
 	 * @return the width
 	 */
-	public int getWidth() {
+	public double getWidth() {
 		return width;
 	}
 
@@ -118,14 +118,14 @@ public class ImageParsingElement extends AbstractParsingElement {
 	 * @param width
 	 *            the width to set
 	 */
-	public void setWidth(int width) {
+	public void setWidth(double width) {
 		this.width = width;
 	}
 
 	/**
 	 * @return the height
 	 */
-	public int getHeight() {
+	public double getHeight() {
 		return height;
 	}
 
@@ -133,7 +133,7 @@ public class ImageParsingElement extends AbstractParsingElement {
 	 * @param height
 	 *            the height to set
 	 */
-	public void setHeight(int height) {
+	public void setHeight(double height) {
 		this.height = height;
 	}
 

@@ -107,7 +107,7 @@ public class XWPFMapper extends DefaultHandler {
 		this.flushStringBuffer();
 		AbstractParsingElement newElement = null;
 
-		//System.out.println("Element: " + name);
+		// System.out.println("Element: " + name);
 
 		if (HTMLConstants.HTML_TAG.equals(name)) {
 			// Do nothing
@@ -216,7 +216,7 @@ public class XWPFMapper extends DefaultHandler {
 															.length(),
 											styleVariable
 													.indexOf(HTMLConstants.HTML_ATTRIBUTE_VALUE_PX));
-							int imageWidth = Integer.parseInt(number);
+							double imageWidth = Double.parseDouble(number);
 							imageParsingElement.setWidth(imageWidth);
 
 						}
@@ -231,7 +231,7 @@ public class XWPFMapper extends DefaultHandler {
 															.length(),
 											styleVariable
 													.indexOf(HTMLConstants.HTML_ATTRIBUTE_VALUE_PX));
-							int imageHeight = Integer.parseInt(number);
+							double imageHeight = Double.parseDouble(number);
 							imageParsingElement.setHeight(imageHeight);
 						}
 
@@ -423,7 +423,7 @@ public class XWPFMapper extends DefaultHandler {
 	}
 
 	/**
-	 * This method finds the last paragraph element in the parsing tree s
+	 * This method finds the last paragraph element in the parsing tree
 	 * 
 	 * @return the last paragraph element
 	 */
@@ -433,6 +433,24 @@ public class XWPFMapper extends DefaultHandler {
 		for (int j = this.parsingTree.size() - 1; j >= 0; j--) {
 			if (ElementType.PARAGRAPH.equals(this.parsingTree.get(j).getType())) {
 				result = (ParagraphParsingElement) this.parsingTree.get(j);
+				break;
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * This method finds the last table element in the parsing tree
+	 * 
+	 * @return the last table element
+	 */
+	private TableParsingElement findLastTableElement() {
+		TableParsingElement result = null;
+
+		for (int j = this.parsingTree.size() - 1; j >= 0; j--) {
+			if (ElementType.TABLE.equals(this.parsingTree.get(j).getType())) {
+				result = (TableParsingElement) this.parsingTree.get(j);
 				break;
 			}
 		}
@@ -612,7 +630,7 @@ public class XWPFMapper extends DefaultHandler {
 		String number = styleVariable.substring(
 				styleVariable.indexOf(attributeType) + attributeType.length(),
 				styleVariable.indexOf(type));
-		int variable = Integer.parseInt(number);
+		double variable = Double.parseDouble(number);
 		if (HTMLConstants.HTML_ATTRIBUTE_VALUE_WIDTH.equals(attributeType)) {
 			tableElement.setWidth(variable, usePercentage);
 		} else {
@@ -759,7 +777,7 @@ public class XWPFMapper extends DefaultHandler {
 				styleVariable.indexOf(HTMLConstants.HTML_ATTRIBUTE_VALUE_WIDTH)
 						+ HTMLConstants.HTML_ATTRIBUTE_VALUE_WIDTH.length(),
 				styleVariable.indexOf(type));
-		int tableWidth = Integer.parseInt(number);
+		double tableWidth = Double.parseDouble(number);
 		tableElement.setWidth(tableWidth, usePercentage);
 	}
 
@@ -798,7 +816,7 @@ public class XWPFMapper extends DefaultHandler {
 	 * This method flushes string buffer by moving data to the correct
 	 * paragraph.
 	 */
-	private void flushStringBuffer() {		
+	private void flushStringBuffer() {
 		if (this.currentTextBuffer != null
 				&& this.currentTextBuffer.length() > 0) {
 			AbstractParsingElement lastElementThatMayContainText = this
@@ -876,12 +894,15 @@ public class XWPFMapper extends DefaultHandler {
 						ElementType.TABLE)) {
 			this.currentTopLevelElement = null;
 		}
+		TableParsingElement table = this.findLastTableElement();
+		table.populateMetaDataUponCompletion();
 	}
 
 	@Override
 	public final void characters(char ch[], int start, int length) {
-		
-		//System.out.println("Current string buffer: " + this.currentTextBuffer);
+
+		// System.out.println("Current string buffer: " +
+		// this.currentTextBuffer);
 
 		if (this.currentTextBuffer == null) {
 			this.currentTextBuffer = new StringBuffer();
@@ -891,9 +912,9 @@ public class XWPFMapper extends DefaultHandler {
 			this.currentTextBuffer.append(ch[i]);
 
 		}
-		
-		//System.out.println("Populated string buffer to: "
-		//		+ this.currentTextBuffer);
+
+		// System.out.println("Populated string buffer to: "
+		// + this.currentTextBuffer);
 	}
 
 	/**

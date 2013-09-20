@@ -91,5 +91,31 @@ public class XHTML2XWPFConverterTestCase {
 				DataAccess.class.getResourceAsStream("test_hyperlink_text.xhtml"), out, null);
 		Assert.assertTrue(outFile.exists());
 	}
+	
+	@Test
+	public void testAdvancedTableWithOutputToFile() throws Exception {
+
+		File outFile = new File("target/advanced_table.docx");
+		outFile.getParentFile().mkdirs();
+
+		OutputStream out = new FileOutputStream(outFile);
+
+		XHTML2XWPFConverter.getInstance().convert(
+				DataAccess.class.getResourceAsStream("advanced_table.xhtml"), out, null);
+		Assert.assertTrue(outFile.exists());
+	}
+	
+	@Test
+	public void testAdvancedCVWithOutputToFile() throws Exception {
+
+		File outFile = new File("target/advanced_cv.docx");
+		outFile.getParentFile().mkdirs();
+
+		OutputStream out = new FileOutputStream(outFile);
+
+		XHTML2XWPFConverter.getInstance().convert(
+				DataAccess.class.getResourceAsStream("advanced_cv.xhtml"), out, null);
+		Assert.assertTrue(outFile.exists());
+	}
 
 }

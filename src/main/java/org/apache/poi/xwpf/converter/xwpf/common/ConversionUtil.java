@@ -29,10 +29,10 @@ public class ConversionUtil {
 	 * @param width width in pixels
 	 * @return width units
 	 */
-	public static int convertTableCellPixelsToWidthUnits(int width) {
-		int widthUnits = (EXCEL_COLUMN_WIDTH_FACTOR * (width / UNIT_OFFSET_LENGTH));
+	public static int convertTableCellPixelsToWidthUnits(double width) {
+		int widthUnits = (int) (EXCEL_COLUMN_WIDTH_FACTOR * (width / UNIT_OFFSET_LENGTH));
 
-		widthUnits = widthUnits + UNIT_OFFSET_MAP[(width % UNIT_OFFSET_LENGTH)];
+		widthUnits = widthUnits + UNIT_OFFSET_MAP[((int)width % UNIT_OFFSET_LENGTH)];
 
 		return widthUnits;
 	}
