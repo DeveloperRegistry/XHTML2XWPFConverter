@@ -23,6 +23,7 @@ public class ConversionUtil {
 	private static final int UNIT_OFFSET_LENGTH = 7;
 	private static final int[] UNIT_OFFSET_MAP = new int[] { 0, 36, 73, 109,
 			146, 182, 219 };
+	private static final double PIXEL_MULTIPLIER_WITH_OFFSET = 15.57;
 
 	/**
 	 * This method converts pixels to width units. 
@@ -36,5 +37,14 @@ public class ConversionUtil {
 
 		return widthUnits;
 	}
-
+	
+	/**
+	 * This method converts pixels to 20-th points.
+	 * @param width width to converted
+	 * @return conversion result
+	 */
+	public static double convertPixelsTo20thPoints( double width )
+	{
+		return (width * PIXEL_MULTIPLIER_WITH_OFFSET);
+	}
 }

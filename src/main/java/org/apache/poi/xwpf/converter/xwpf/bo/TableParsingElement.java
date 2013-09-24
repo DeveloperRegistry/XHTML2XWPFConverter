@@ -17,15 +17,24 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.util.Units;
+import org.apache.poi.xwpf.converter.xwpf.common.ConversionUtil;
 import org.apache.poi.xwpf.converter.xwpf.common.ElementType;
 import org.apache.poi.xwpf.converter.xwpf.common.HTMLConstants;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTable.XWPFBorderType;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageSz;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblGrid;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblGridCol;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
 
 /**
  * This class encapsulates a table parsing element.
@@ -132,16 +141,15 @@ public class TableParsingElement extends AbstractParsingElement {
 	public void setWidth(double width, boolean usePercentage) {
 
 		if (usePercentage) {
-			CTPageSz pageSize = this.getDocument().getDocument().getBody()
-					.getSectPr().getPgSz();
-			BigInteger documentWidth = pageSize.getW();
-			int tableWidth = (int)( (documentWidth.intValue() / 100) * width);
+			BigInteger documentWidth = this.getDocumentWidth();
+			int tableWidth = (int) ((documentWidth.intValue() / 100) * width);
 			docxTable.setWidth(tableWidth);
 
 		} else {
-			docxTable.setWidth(Units.toEMU(width));
+			//docxTable.setWidth(Units.toEMU(width));
+			docxTable.setWidth((int)ConversionUtil.convertPixelsTo20thPoints(width));
 		}
-
+		//System.out.println(" Set table width to: "+docxTable.getWidth());
 	}
 
 	/**
@@ -247,17 +255,93 @@ public class TableParsingElement extends AbstractParsingElement {
 
 	/**
 	 * This method finalizes table's meta data when the table is fully
-	 * populated.
+	 * populated. The method is only needed for future PDF conversion because
+	 * PDF converter expects this data. Setting this meta data variables does
+	 * not have any impact on generated POI word document.
 	 */
 	public void populateMetaDataUponCompletion() {
-	
-		if (docxTable.getCTTbl() != null
-				&& docxTable.getCTTbl().getTblPr() == null) {
-			docxTable.getCTTbl().addNewTblPr();
-		}
-		
-		
 
+		CTTbl cTTbl = docxTable.getCTTbl();
+		List<CTTblGridCol> cols = null;
+		CTTblGrid grid = null;
+
+		if (cTTbl != null) {
+
+			this.getCTTblPr(cTTbl);
+
+			grid = this.getCTTblGrid(cTTbl);
+			cols = grid.getGridColList();
+
+		}
+
+		for (XWPFTableRow row : this.docxTable.getRows()) {
+
+			int diff = row.getTableCells().size() - cols.size();
+
+			for (int i = 0; i < diff; i++) {
+				grid.addNewGridCol();
+			}
+
+			int i = 0;
+
+			for (XWPFTableCell cell : row.getTableCells()) {
+
+				CTTblGridCol gridColumn = cols.get(i);
+
+				if (cell.getCTTc().getTcPr().getTcW().getW().intValue() == 0) {
+					BigInteger columnWidth = this.getDocumentWidth().divide(
+							BigInteger.valueOf(row.getTableCells().size()));
+					cell.getCTTc().getTcPr().getTcW().setW(columnWidth);
+					cell.getCTTc().getTcPr().getTcW().setType(STTblWidth.DXA);
+					gridColumn.setW(columnWidth);
+
+				}
+				i++;
+			}
+		}		
+	}
+
+	/**
+	 * This method returns existing or creates new CTTblGrid.
+	 * 
+	 * @param cTTbl
+	 *            CTTbl
+	 * @return CTTblGrid
+	 */
+	private CTTblGrid getCTTblGrid(CTTbl cTTbl) {
+		CTTblGrid grid = cTTbl.getTblGrid();
+
+		if (grid == null) {
+			grid = cTTbl.addNewTblGrid();
+		}
+		return grid;
+	}
+
+	/**
+	 * This method returns existing or adds new CTTblPr
+	 * 
+	 * @param cTTbl
+	 *            CTTblPr
+	 * @return CTTblPr
+	 */
+	private CTTblPr getCTTblPr(CTTbl cTTbl) {
+		CTTblPr cTTblpr = cTTbl.getTblPr();
+		if (cTTblpr == null) {
+			cTTblpr = docxTable.getCTTbl().addNewTblPr();
+		}
+		return cTTblpr;
+	}
+
+	/**
+	 * This method returns document width.
+	 * 
+	 * @return document width
+	 */
+	private BigInteger getDocumentWidth() {
+		CTPageSz pageSize = this.getDocument().getDocument().getBody()
+				.getSectPr().getPgSz();
+		BigInteger documentWidth = pageSize.getW();
+		return documentWidth;
 	}
 
 }
