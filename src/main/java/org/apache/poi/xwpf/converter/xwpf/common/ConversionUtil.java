@@ -23,7 +23,7 @@ public class ConversionUtil {
 	private static final int UNIT_OFFSET_LENGTH = 7;
 	private static final int[] UNIT_OFFSET_MAP = new int[] { 0, 36, 73, 109,
 			146, 182, 219 };
-	private static final double PIXEL_MULTIPLIER_WITH_OFFSET = 15.57;
+	private static final double PIXEL_MULTIPLIER_WITH_OFFSET = 15.27;
 
 	/**
 	 * This method converts pixels to width units. 
