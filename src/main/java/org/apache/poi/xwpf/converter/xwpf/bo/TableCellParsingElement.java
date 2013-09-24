@@ -23,6 +23,8 @@ import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageSz;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblGrid;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
@@ -83,7 +85,25 @@ public class TableCellParsingElement extends AbstractParsingElement {
 		cTTblWidth.setW(new BigInteger("0"));
 		cTTblWidth.setType(STTblWidth.AUTO);
 		this.addNewGridSpanColumn();
+		this.getCTPPr(cttc);
 		return cell;
+	}
+
+	/**
+	 * This method creates new or returns existing CTPPr.
+	 * 
+	 * @param cttc
+	 *            CTTc
+	 * @return CTPPr new or returns existing CTPPr
+	 */
+	private CTPPr getCTPPr(CTTc cttc) {
+		CTPPr cTPPr = cttc.getPArray(0).getPPr();
+
+		if (cTPPr == null) {
+			cTPPr = cttc.getPArray(0).addNewPPr();
+		}
+
+		return cTPPr;
 	}
 
 	/**
@@ -230,11 +250,11 @@ public class TableCellParsingElement extends AbstractParsingElement {
 			CTPageSz pageSize = this.getDocument().getDocument().getBody()
 					.getSectPr().getPgSz();
 			BigInteger documentHeight = pageSize.getH();
-			int tableRowHeight = (int) ( (documentHeight.intValue() / 100) * height);
+			int tableRowHeight = (int) ((documentHeight.intValue() / 100) * height);
 			this.docxTableRow.setHeight(tableRowHeight);
 
 		} else {
-			this.docxTableRow.setHeight((int)height);
+			this.docxTableRow.setHeight((int) height);
 		}
 	}
 
@@ -256,7 +276,7 @@ public class TableCellParsingElement extends AbstractParsingElement {
 			CTPageSz pageSize = this.getDocument().getDocument().getBody()
 					.getSectPr().getPgSz();
 			BigInteger documentWidth = pageSize.getW();
-			int tableWidth = (int) ( (documentWidth.intValue() / 100) * width) ;
+			int tableWidth = (int) ((documentWidth.intValue() / 100) * width);
 			cTTblWidth.setW(BigInteger.valueOf(tableWidth));
 
 		} else {
