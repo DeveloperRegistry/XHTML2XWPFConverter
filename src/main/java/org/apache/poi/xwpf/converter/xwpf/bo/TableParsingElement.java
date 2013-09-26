@@ -146,10 +146,11 @@ public class TableParsingElement extends AbstractParsingElement {
 			docxTable.setWidth(tableWidth);
 
 		} else {
-			//docxTable.setWidth(Units.toEMU(width));
-			docxTable.setWidth((int)ConversionUtil.convertPixelsTo20thPoints(width));
+			// docxTable.setWidth(Units.toEMU(width));
+			docxTable.setWidth((int) ConversionUtil
+					.convertPixelsTo20thPoints(width));
 		}
-		//System.out.println(" Set table width to: "+docxTable.getWidth());
+		// System.out.println(" Set table width to: "+docxTable.getWidth());
 	}
 
 	/**
@@ -298,7 +299,19 @@ public class TableParsingElement extends AbstractParsingElement {
 				}
 				i++;
 			}
-		}		
+		}
+
+		List<CTTblGridCol> tableCols = grid.getGridColList();
+		for (CTTblGridCol col : tableCols) {
+			// System.out.println("tblGridCol.getW()=" + col.getW());
+			if (col.getW() == null) {
+				BigInteger columnWidth = this.getDocumentWidth().divide(
+						BigInteger.valueOf(tableCols.size()));
+				col.setW(columnWidth);
+
+			}
+		}
+
 	}
 
 	/**
