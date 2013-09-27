@@ -52,6 +52,8 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 		super(ElementType.PARAGRAPH, topLevel, document);
 		super.setMayContainText(true);
 		super.setMayContainStrong(true);
+		super.setMayContainItalic(true);
+		super.setMayContainStrikeThrough(true);
 		super.setMayContainBullet(true);
 		this.containingElement = containingElement;
 		this.paragraphData = paragraphData;
@@ -114,6 +116,8 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 		XWPFRun run = this.docxParagraph.createRun(); // create run object in
 														// the paragraph
 		run.setBold(this.isStrong());
+		run.setItalic(this.isItalic());
+		run.setStrike(this.isStrikeThrough());
 		run.setText(para);
 		//System.out.println("Created new run for paragraph: " + para);
 

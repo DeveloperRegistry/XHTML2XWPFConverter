@@ -32,10 +32,14 @@ public class AbstractParsingElement {
 	private XWPFDocument document;
 	private boolean mayContainText;
 	private boolean mayContainStrong;
+	private boolean mayContainItalic;
+	private boolean mayContainStrikeThrough;
 	private boolean mayContainBullet;
 	private boolean mayContainParagraph;
 	private boolean strong;
 	private boolean bullet;
+	private boolean italic;
+	private boolean strikeThrough;
 	private StringBuffer paragraphData;
 	private ArrayList<AbstractParsingElement> innerElements = new ArrayList<AbstractParsingElement>();
 
@@ -237,6 +241,66 @@ public class AbstractParsingElement {
 	 */
 	public void setMayContainParagraph(boolean mayContainParagraph) {
 		this.mayContainParagraph = mayContainParagraph;
+	}
+
+	/**
+	 * @return the mayContainItalic
+	 */
+	public boolean isMayContainItalic() {
+		return mayContainItalic;
+	}
+
+	/**
+	 * @param mayContainItalic
+	 *            the mayContainItalic to set
+	 */
+	public void setMayContainItalic(boolean mayContainItalic) {
+		this.mayContainItalic = mayContainItalic;
+	}
+
+	/**
+	 * @return the mayContainStrikeThrough
+	 */
+	public boolean isMayContainStrikeThrough() {
+		return mayContainStrikeThrough;
+	}
+
+	/**
+	 * @param mayContainStrikeThrough
+	 *            the mayContainStrikeThrough to set
+	 */
+	public void setMayContainStrikeThrough(boolean mayContainStrikeThrough) {
+		this.mayContainStrikeThrough = mayContainStrikeThrough;
+	}
+
+	/**
+	 * @return the italic
+	 */
+	public boolean isItalic() {
+		return italic;
+	}
+
+	/**
+	 * @param italic
+	 *            the italic to set
+	 */
+	public void setItalic(boolean italic) {
+		this.italic = italic;
+	}
+
+	/**
+	 * @return the strikeThrough
+	 */
+	public boolean isStrikeThrough() {
+		return strikeThrough;
+	}
+
+	/**
+	 * @param strikeThrough
+	 *            the strikeThrough to set
+	 */
+	public void setStrikeThrough(boolean strikeThrough) {
+		this.strikeThrough = strikeThrough;
 	}
 
 }

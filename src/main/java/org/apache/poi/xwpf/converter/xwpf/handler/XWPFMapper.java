@@ -107,7 +107,7 @@ public class XWPFMapper extends DefaultHandler {
 		this.flushStringBuffer();
 		AbstractParsingElement newElement = null;
 
-		//System.out.println("Element: " + name);
+		// System.out.println("Element: " + name);
 
 		if (HTMLConstants.HTML_TAG.equals(name)) {
 			// Do nothing
@@ -140,16 +140,45 @@ public class XWPFMapper extends DefaultHandler {
 			newElement = this.handleImageStart(atts);
 		} else if (HTMLConstants.BR_TAG.equals(name)) {
 			this.handleLineBreakStart(atts);
+		} else if (HTMLConstants.EM_TAG.equals(name)) {
+			this.handleItalicStart(atts);
+		} else if (HTMLConstants.S_TAG.equals(name)) {
+			this.handleStrikeThroughStart(atts);
 		} else {
 			// development only. Remove before releasing code
-			// throw new XWPFDocumentConversionException(" Unsupported tag: "
-			// + name + ". Implement the tag!");
+			//throw new XWPFDocumentConversionException(" Unsupported tag: "
+			//		+ name + ". Implement the tag!");
 		}
 
 		if (newElement != null) {
 			this.parsingTree.add(newElement);
 		}
 
+	}
+
+	/**
+	 * This method handles Strike Through Start
+	 * 
+	 * @param atts
+	 *            attributes
+	 */
+	private void handleStrikeThroughStart(Attributes atts) {
+		AbstractParsingElement lastMayContainStrikeThroughElement = this
+				.findLastMayContainStrikeThroughElement();
+		lastMayContainStrikeThroughElement.setStrikeThrough(true);
+
+	}
+
+	/**
+	 * This method handles Italic start.
+	 * 
+	 * @param atts
+	 *            attributes
+	 */
+	private void handleItalicStart(Attributes atts) {
+		AbstractParsingElement lastMayContainItalicElement = this
+				.findLastMayContainItalicElement();
+		lastMayContainItalicElement.setItalic(true);
 	}
 
 	/**
@@ -410,15 +439,54 @@ public class XWPFMapper extends DefaultHandler {
 
 	/**
 	 * This method finds the last element in the parsing tree that may contain
-	 * text
+	 * Strong text.
 	 * 
-	 * @return the last element in the parsing tree that may contain text
+	 * @return the last element in the parsing tree that may contain strong
 	 */
 	private AbstractParsingElement findLastMayContainStrongElement() {
 		AbstractParsingElement result = null;
 
 		for (int j = this.parsingTree.size() - 1; j >= 0; j--) {
 			if (this.parsingTree.get(j).isMayContainStrong()) {
+				result = this.parsingTree.get(j);
+				break;
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * This method finds the last element in the parsing tree that may contain
+	 * Italic.
+	 * 
+	 * @return the last element in the parsing tree that may contain italic
+	 */
+	private AbstractParsingElement findLastMayContainItalicElement() {
+		AbstractParsingElement result = null;
+
+		for (int j = this.parsingTree.size() - 1; j >= 0; j--) {
+			if (this.parsingTree.get(j).isMayContainItalic()) {
+				result = this.parsingTree.get(j);
+				break;
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * This method finds the last element in the parsing tree that may contain
+	 * Strike Through.
+	 * 
+	 * @return the last element in the parsing tree that may contain Strike
+	 *         Through
+	 */
+	private AbstractParsingElement findLastMayContainStrikeThroughElement() {
+		AbstractParsingElement result = null;
+
+		for (int j = this.parsingTree.size() - 1; j >= 0; j--) {
+			if (this.parsingTree.get(j).isMayContainStrikeThrough()) {
 				result = this.parsingTree.get(j);
 				break;
 			}
@@ -819,7 +887,27 @@ public class XWPFMapper extends DefaultHandler {
 			this.handleImageEnd();
 		} else if (HTMLConstants.BR_TAG.equals(name)) {
 			this.handleLineBreakEnd();
+		} else if (HTMLConstants.EM_TAG.equals(name)) {
+			this.handleItalicEnd();
+		} else if (HTMLConstants.S_TAG.equals(name)) {
+			this.handleStrikeThroughEnd();
 		}
+
+	}
+
+	/**
+	 * This method handles Strike Through End
+	 */
+	private void handleStrikeThroughEnd() {
+		// Presently, do nothing
+
+	}
+
+	/**
+	 * This method handles Italic end.
+	 */
+	private void handleItalicEnd() {
+		// Presently, do nothing
 
 	}
 

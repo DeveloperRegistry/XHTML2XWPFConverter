@@ -33,6 +33,9 @@ public class HTMLConstants {
 	public static final String BR_TAG = "br";
 	public static final String THEAD_TAG = "thead";
 	public static final String TFOOT_TAG = "tfoot";
+	public static final String EM_TAG = "em";
+	public static final String S_TAG = "s";
+	
 	
 
 	public static final String STRONG_TAG = "strong";

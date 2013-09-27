@@ -130,5 +130,57 @@ public class XHTML2XWPFConverterTestCase {
 				DataAccess.class.getResourceAsStream("advanced_table_subset.xhtml"), out, null);
 		Assert.assertTrue(outFile.exists());
 	}
+	
+	@Test
+	public void testFormattingTestWithOutputToFile() throws Exception {
+
+		File outFile = new File("target/formatting_test.docx");
+		outFile.getParentFile().mkdirs();
+
+		OutputStream out = new FileOutputStream(outFile);
+
+		XHTML2XWPFConverter.getInstance().convert(
+				DataAccess.class.getResourceAsStream("formatting_test.xhtml"), out, null);
+		Assert.assertTrue(outFile.exists());
+	}
+	
+	@Test
+	public void testNumbersTestWithOutputToFile() throws Exception {
+
+		File outFile = new File("target/numbers_test.docx");
+		outFile.getParentFile().mkdirs();
+
+		OutputStream out = new FileOutputStream(outFile);
+
+		XHTML2XWPFConverter.getInstance().convert(
+				DataAccess.class.getResourceAsStream("numbers_test.xhtml"), out, null);
+		Assert.assertTrue(outFile.exists());
+	}
+	
+	@Test
+	public void testWebTableTestWithOutputToFile() throws Exception {
+
+		File outFile = new File("target/web_table.docx");
+		outFile.getParentFile().mkdirs();
+
+		OutputStream out = new FileOutputStream(outFile);
+
+		XHTML2XWPFConverter.getInstance().convert(
+				DataAccess.class.getResourceAsStream("web_table.xhtml"), out, null);
+		Assert.assertTrue(outFile.exists());
+	}
+	
+	@Test
+	public void testAdvancedFormattingAndCharsTestWithOutputToFile() throws Exception {
+
+		File outFile = new File("target/web_table.docx");
+		outFile.getParentFile().mkdirs();
+
+		OutputStream out = new FileOutputStream(outFile);
+
+		XHTML2XWPFConverter.getInstance().convert(
+				DataAccess.class.getResourceAsStream("advanced_formatting_and_chars_test.xhtml"), out, null);
+		Assert.assertTrue(outFile.exists());
+	}
 
 }

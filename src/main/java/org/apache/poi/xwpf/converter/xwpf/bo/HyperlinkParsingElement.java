@@ -51,6 +51,8 @@ public class HyperlinkParsingElement extends AbstractParsingElement {
 		super(ElementType.HYPERLINK, false, document);
 		super.setMayContainText(true);
 		super.setMayContainStrong(true);
+		super.setMayContainItalic(true);
+		super.setMayContainStrikeThrough(true);
 		this.paragraphParsingElement = paragraphParsingElement;
 	}
 
