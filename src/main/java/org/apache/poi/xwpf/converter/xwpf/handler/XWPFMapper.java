@@ -146,10 +146,12 @@ public class XWPFMapper extends DefaultHandler {
 			this.handleStrikeThroughStart(atts);
 		} else if (HTMLConstants.U_TAG.equals(name)) {
 			this.handleUnderlineStart(atts);
+		} else if (HTMLConstants.HR_TAG.equals(name)) {
+			this.handleHorizontalLineStart(atts);
 		} else {
 			// development only. Remove before releasing code
-			//throw new XWPFDocumentConversionException(" Unsupported tag: "
-			//		+ name + ". Implement the tag!");
+			// throw new XWPFDocumentConversionException(" Unsupported tag: "
+			// + name + ". Implement the tag!");
 		}
 
 		if (newElement != null) {
@@ -159,13 +161,30 @@ public class XWPFMapper extends DefaultHandler {
 	}
 
 	/**
+	 * This method handles horizontal line start.
+	 * 
+	 * @param atts
+	 *            attributes
+	 * @return paragraph parsing element
+	 */
+	private AbstractParsingElement handleHorizontalLineStart(Attributes atts) {
+		ParagraphParsingElement paragraph = this.createNewParagraph();
+		paragraph.setHorizontalLine(true);
+
+		return paragraph;
+
+	}
+
+	/**
 	 * This method handles underline start
-	 * @param atts attributes
+	 * 
+	 * @param atts
+	 *            attributes
 	 */
 	private void handleUnderlineStart(Attributes atts) {
 		AbstractParsingElement lastMayContainUnderlineElement = this
 				.findLastMayContainUnderlineElement();
-		lastMayContainUnderlineElement.setUnderline(true);		
+		lastMayContainUnderlineElement.setUnderline(true);
 	}
 
 	/**
@@ -381,7 +400,7 @@ public class XWPFMapper extends DefaultHandler {
 	 */
 	private AbstractParsingElement handleParagraphStart(Attributes atts) {
 
-		ParagraphParsingElement paragraph = createNewParagraph();
+		ParagraphParsingElement paragraph = this.createNewParagraph();
 
 		this.handleParagraphAttributes(atts, paragraph);
 
@@ -486,7 +505,7 @@ public class XWPFMapper extends DefaultHandler {
 
 		return result;
 	}
-	
+
 	/**
 	 * This method finds the last element in the parsing tree that may contain
 	 * Underline.
@@ -922,10 +941,19 @@ public class XWPFMapper extends DefaultHandler {
 			this.handleItalicEnd();
 		} else if (HTMLConstants.S_TAG.equals(name)) {
 			this.handleStrikeThroughEnd();
-		}
-		else if (HTMLConstants.U_TAG.equals(name)) {
+		} else if (HTMLConstants.U_TAG.equals(name)) {
 			this.handleUnderlineEnd();
+		} else if (HTMLConstants.HR_TAG.equals(name)) {
+			this.handleHorizontalLineEnd();
 		}
+
+	}
+
+	/**
+	 * This method handles horizontal line end.
+	 */
+	private void handleHorizontalLineEnd() {
+		// Presently, do nothing
 
 	}
 
@@ -933,8 +961,8 @@ public class XWPFMapper extends DefaultHandler {
 	 * This method handles underline end
 	 */
 	private void handleUnderlineEnd() {
-		/// Presently, do nothing
-		
+		// Presently, do nothing
+
 	}
 
 	/**

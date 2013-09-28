@@ -15,6 +15,7 @@ package org.apache.poi.xwpf.converter.xwpf.bo;
 
 import org.apache.poi.xwpf.converter.xwpf.common.ElementType;
 import org.apache.poi.xwpf.converter.xwpf.common.StyleConstants;
+import org.apache.poi.xwpf.usermodel.Borders;
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -33,6 +34,7 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 	private AbstractParsingElement containingElement;
 	private StringBuffer paragraphData;
 	private XWPFParagraph docxParagraph;
+	private boolean horizontalLine; //to support HR tag
 
 	/**
 	 * Constructor
@@ -157,4 +159,31 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 		XWPFRun run = this.docxParagraph.createRun();
 		run.addCarriageReturn();
 	}
+
+	/**
+	 * @return the horizontalLine
+	 */
+	public boolean isHorizontalLine() {
+		return horizontalLine;
+	}
+
+	/**
+	 * @param horizontalLine the horizontalLine to set
+	 */
+	public void setHorizontalLine(boolean horizontalLine) {
+		this.horizontalLine = horizontalLine;
+		
+		if( this.horizontalLine )
+		{
+			super.setMayContainText(false);
+			super.setMayContainStrong(false);
+			super.setMayContainItalic(false);
+			super.setMayContainStrikeThrough(false);
+			super.setMayContainBullet(false);
+			super.setMayContainUnderline(false);
+			this.docxParagraph.setBorderBottom(Borders.SINGLE);
+		}
+	}
+	
+	
 }

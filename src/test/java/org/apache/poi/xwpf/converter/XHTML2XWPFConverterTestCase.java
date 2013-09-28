@@ -173,7 +173,7 @@ public class XHTML2XWPFConverterTestCase {
 	@Test
 	public void testAdvancedFormattingAndCharsTestWithOutputToFile() throws Exception {
 
-		File outFile = new File("target/web_table.docx");
+		File outFile = new File("target/advanced_formatting_and_chars_test.docx");
 		outFile.getParentFile().mkdirs();
 
 		OutputStream out = new FileOutputStream(outFile);

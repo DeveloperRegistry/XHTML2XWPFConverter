@@ -36,6 +36,7 @@ public class HTMLConstants {
 	public static final String EM_TAG = "em";
 	public static final String S_TAG = "s";
 	public static final String U_TAG = "u";
+	public static final String HR_TAG = "hr";
 	
 	
 
