@@ -33,6 +33,7 @@ public class AbstractParsingElement {
 	private boolean mayContainText;
 	private boolean mayContainStrong;
 	private boolean mayContainItalic;
+	private boolean mayContainUnderline;
 	private boolean mayContainStrikeThrough;
 	private boolean mayContainBullet;
 	private boolean mayContainParagraph;
@@ -40,6 +41,7 @@ public class AbstractParsingElement {
 	private boolean bullet;
 	private boolean italic;
 	private boolean strikeThrough;
+	private boolean underline;
 	private StringBuffer paragraphData;
 	private ArrayList<AbstractParsingElement> innerElements = new ArrayList<AbstractParsingElement>();
 
@@ -301,6 +303,36 @@ public class AbstractParsingElement {
 	 */
 	public void setStrikeThrough(boolean strikeThrough) {
 		this.strikeThrough = strikeThrough;
+	}
+
+	/**
+	 * @return the mayContainUnderline
+	 */
+	public boolean isMayContainUnderline() {
+		return mayContainUnderline;
+	}
+
+	/**
+	 * @param mayContainUnderline
+	 *            the mayContainUnderline to set
+	 */
+	public void setMayContainUnderline(boolean mayContainUnderline) {
+		this.mayContainUnderline = mayContainUnderline;
+	}
+
+	/**
+	 * @return the underline
+	 */
+	public boolean isUnderline() {
+		return underline;
+	}
+
+	/**
+	 * @param underline
+	 *            the underline to set
+	 */
+	public void setUnderline(boolean underline) {
+		this.underline = underline;
 	}
 
 }

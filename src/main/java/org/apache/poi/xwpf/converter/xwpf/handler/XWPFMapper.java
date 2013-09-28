@@ -144,6 +144,8 @@ public class XWPFMapper extends DefaultHandler {
 			this.handleItalicStart(atts);
 		} else if (HTMLConstants.S_TAG.equals(name)) {
 			this.handleStrikeThroughStart(atts);
+		} else if (HTMLConstants.U_TAG.equals(name)) {
+			this.handleUnderlineStart(atts);
 		} else {
 			// development only. Remove before releasing code
 			//throw new XWPFDocumentConversionException(" Unsupported tag: "
@@ -154,6 +156,16 @@ public class XWPFMapper extends DefaultHandler {
 			this.parsingTree.add(newElement);
 		}
 
+	}
+
+	/**
+	 * This method handles underline start
+	 * @param atts attributes
+	 */
+	private void handleUnderlineStart(Attributes atts) {
+		AbstractParsingElement lastMayContainUnderlineElement = this
+				.findLastMayContainUnderlineElement();
+		lastMayContainUnderlineElement.setUnderline(true);		
 	}
 
 	/**
@@ -467,6 +479,25 @@ public class XWPFMapper extends DefaultHandler {
 
 		for (int j = this.parsingTree.size() - 1; j >= 0; j--) {
 			if (this.parsingTree.get(j).isMayContainItalic()) {
+				result = this.parsingTree.get(j);
+				break;
+			}
+		}
+
+		return result;
+	}
+	
+	/**
+	 * This method finds the last element in the parsing tree that may contain
+	 * Underline.
+	 * 
+	 * @return the last element in the parsing tree that may contain Underline
+	 */
+	private AbstractParsingElement findLastMayContainUnderlineElement() {
+		AbstractParsingElement result = null;
+
+		for (int j = this.parsingTree.size() - 1; j >= 0; j--) {
+			if (this.parsingTree.get(j).isMayContainUnderline()) {
 				result = this.parsingTree.get(j);
 				break;
 			}
@@ -892,7 +923,18 @@ public class XWPFMapper extends DefaultHandler {
 		} else if (HTMLConstants.S_TAG.equals(name)) {
 			this.handleStrikeThroughEnd();
 		}
+		else if (HTMLConstants.U_TAG.equals(name)) {
+			this.handleUnderlineEnd();
+		}
 
+	}
+
+	/**
+	 * This method handles underline end
+	 */
+	private void handleUnderlineEnd() {
+		/// Presently, do nothing
+		
 	}
 
 	/**

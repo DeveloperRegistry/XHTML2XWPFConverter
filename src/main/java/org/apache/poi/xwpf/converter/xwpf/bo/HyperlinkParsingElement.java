@@ -15,6 +15,7 @@ package org.apache.poi.xwpf.converter.xwpf.bo;
 
 import org.apache.poi.xwpf.converter.xwpf.common.ElementType;
 import org.apache.poi.xwpf.converter.xwpf.common.HTMLConstants;
+import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlink;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
@@ -53,6 +54,7 @@ public class HyperlinkParsingElement extends AbstractParsingElement {
 		super.setMayContainStrong(true);
 		super.setMayContainItalic(true);
 		super.setMayContainStrikeThrough(true);
+		super.setMayContainUnderline(true);
 		this.paragraphParsingElement = paragraphParsingElement;
 	}
 
@@ -105,7 +107,7 @@ public class HyperlinkParsingElement extends AbstractParsingElement {
 
 	@Override
 	public void setParagraphData(StringBuffer paragraphData) {
-		//docxHyperlink = new XWPFHyperlink(this.id, this.url);
+		// docxHyperlink = new XWPFHyperlink(this.id, this.url);
 		// CTHyperlink hyperlink =
 		// this.paragraphParsingElement.getDocxParagraph().getCTP().addNewHyperlink();
 		// hyperlink.setId(paragraphData.toString());
@@ -114,11 +116,17 @@ public class HyperlinkParsingElement extends AbstractParsingElement {
 		// this.paragraphParsingElement.getDocxParagraph().addRun(run);
 		XWPFRun run = this.paragraphParsingElement.getDocxParagraph()
 				.createRun(); // create run object in the paragraph
-		run.setBold(this.isStrong());	
+		run.setBold(this.isStrong());
 		run.setColor(HTMLConstants.COLOR_HYPERLINK_BLUE);
+		run.setBold(this.isStrong());
+		run.setItalic(this.isItalic());
+		run.setStrike(this.isStrikeThrough());
+		if (this.isUnderline()) {
+			run.setUnderline(UnderlinePatterns.THICK);
+		}
 		run.setText(paragraphData.toString());
-		
-		//System.out.println("Created new run for hyperlink on paragraph: "+this.paragraphParsingElement);
+
+		// System.out.println("Created new run for hyperlink on paragraph: "+this.paragraphParsingElement);
 
 	}
 

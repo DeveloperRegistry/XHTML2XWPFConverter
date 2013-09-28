@@ -15,6 +15,7 @@ package org.apache.poi.xwpf.converter.xwpf.bo;
 
 import org.apache.poi.xwpf.converter.xwpf.common.ElementType;
 import org.apache.poi.xwpf.converter.xwpf.common.StyleConstants;
+import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
@@ -55,6 +56,7 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 		super.setMayContainItalic(true);
 		super.setMayContainStrikeThrough(true);
 		super.setMayContainBullet(true);
+		super.setMayContainUnderline(true);
 		this.containingElement = containingElement;
 		this.paragraphData = paragraphData;
 
@@ -100,7 +102,7 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 	@Override
 	public void setParagraphData(StringBuffer paragraphData) {
 
-		//System.out.println("Setting paragraphData="+paragraphData);
+		// System.out.println("Setting paragraphData="+paragraphData);
 		this.paragraphData = paragraphData;
 
 		String para = paragraphData.toString();
@@ -118,8 +120,11 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 		run.setBold(this.isStrong());
 		run.setItalic(this.isItalic());
 		run.setStrike(this.isStrikeThrough());
+		if (this.isUnderline()) {
+			run.setUnderline(UnderlinePatterns.THICK);
+		}
 		run.setText(para);
-		//System.out.println("Created new run for paragraph: " + para);
+		// System.out.println("Created new run for paragraph: " + para);
 
 	}
 

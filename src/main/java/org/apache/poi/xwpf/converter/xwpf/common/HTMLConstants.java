@@ -35,6 +35,7 @@ public class HTMLConstants {
 	public static final String TFOOT_TAG = "tfoot";
 	public static final String EM_TAG = "em";
 	public static final String S_TAG = "s";
+	public static final String U_TAG = "u";
 	
 	
 
