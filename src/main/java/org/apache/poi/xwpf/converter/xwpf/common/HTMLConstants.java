@@ -37,6 +37,13 @@ public class HTMLConstants {
 	public static final String S_TAG = "s";
 	public static final String U_TAG = "u";
 	public static final String HR_TAG = "hr";
+	public static final String H1_TAG = "h1";
+	public static final String H2_TAG = "h2";
+	public static final String H3_TAG = "h3";
+	public static final String H4_TAG = "h4";
+	public static final String H5_TAG = "h5";
+	public static final String H6_TAG = "h6";
+	
 	
 	
 

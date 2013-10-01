@@ -34,7 +34,7 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 	private AbstractParsingElement containingElement;
 	private StringBuffer paragraphData;
 	private XWPFParagraph docxParagraph;
-	private boolean horizontalLine; //to support HR tag
+	private boolean horizontalLine; // to support HR tag
 
 	/**
 	 * Constructor
@@ -59,6 +59,7 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 		super.setMayContainStrikeThrough(true);
 		super.setMayContainBullet(true);
 		super.setMayContainUnderline(true);
+		this.setMayContainHeading(true);
 		this.containingElement = containingElement;
 		this.paragraphData = paragraphData;
 
@@ -72,6 +73,7 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 			this.docxParagraph = cell.getDocxTableCell().addParagraph();
 
 		}
+
 		// System.out.println("Created paragraph: "
 		// + this.docxParagraph
 		// + "; containingElement: "
@@ -125,8 +127,12 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 		if (this.isUnderline()) {
 			run.setUnderline(UnderlinePatterns.THICK);
 		}
+		if (this.isHeadingLevelSet()) {
+			this.docxParagraph.setStyle(this.getHeadingLevel());
+		}
 		run.setText(para);
-		// System.out.println("Created new run for paragraph: " + para);
+		// System.out.println("Created new run for paragraph: " + para
+		// + "; docxPara=" + this.docxParagraph);
 
 	}
 
@@ -168,22 +174,22 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 	}
 
 	/**
-	 * @param horizontalLine the horizontalLine to set
+	 * @param horizontalLine
+	 *            the horizontalLine to set
 	 */
 	public void setHorizontalLine(boolean horizontalLine) {
 		this.horizontalLine = horizontalLine;
-		
-		if( this.horizontalLine )
-		{
+
+		if (this.horizontalLine) {
 			super.setMayContainText(false);
 			super.setMayContainStrong(false);
 			super.setMayContainItalic(false);
 			super.setMayContainStrikeThrough(false);
 			super.setMayContainBullet(false);
 			super.setMayContainUnderline(false);
+			super.setMayContainHeading(false);
 			this.docxParagraph.setBorderBottom(Borders.SINGLE);
 		}
 	}
-	
-	
+
 }

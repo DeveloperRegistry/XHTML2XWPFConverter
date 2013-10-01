@@ -27,6 +27,7 @@ import org.apache.poi.xwpf.converter.xwpf.bo.TableRowParsingElement;
 import org.apache.poi.xwpf.converter.xwpf.bo.XWPFOptions;
 import org.apache.poi.xwpf.converter.xwpf.common.ElementType;
 import org.apache.poi.xwpf.converter.xwpf.common.HTMLConstants;
+import org.apache.poi.xwpf.converter.xwpf.common.StyleConstants;
 import org.apache.poi.xwpf.converter.xwpf.exception.XWPFDocumentConversionException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -107,7 +108,7 @@ public class XWPFMapper extends DefaultHandler {
 		this.flushStringBuffer();
 		AbstractParsingElement newElement = null;
 
-		// System.out.println("Element: " + name);
+		//System.out.println("Element: " + name);
 
 		if (HTMLConstants.HTML_TAG.equals(name)) {
 			// Do nothing
@@ -147,7 +148,19 @@ public class XWPFMapper extends DefaultHandler {
 		} else if (HTMLConstants.U_TAG.equals(name)) {
 			this.handleUnderlineStart(atts);
 		} else if (HTMLConstants.HR_TAG.equals(name)) {
-			this.handleHorizontalLineStart(atts);
+			newElement = this.handleHorizontalLineStart(atts);
+		} else if (HTMLConstants.H1_TAG.equals(name)) {
+			newElement = this.handleHeadingLevel(atts, 1);
+		} else if (HTMLConstants.H2_TAG.equals(name)) {
+			newElement = this.handleHeadingLevel(atts, 2);
+		} else if (HTMLConstants.H3_TAG.equals(name)) {
+			newElement = this.handleHeadingLevel(atts, 3);
+		} else if (HTMLConstants.H4_TAG.equals(name)) {
+			newElement = this.handleHeadingLevel(atts, 4);
+		} else if (HTMLConstants.H5_TAG.equals(name)) {
+			newElement = this.handleHeadingLevel(atts, 5);
+		} else if (HTMLConstants.H6_TAG.equals(name)) {
+			newElement = this.handleHeadingLevel(atts, 6);
 		} else {
 			// development only. Remove before releasing code
 			// throw new XWPFDocumentConversionException(" Unsupported tag: "
@@ -161,6 +174,21 @@ public class XWPFMapper extends DefaultHandler {
 	}
 
 	/**
+	 * This method handles Heading Level
+	 * 
+	 * @param atts
+	 *            attributes
+	 * @param level
+	 *            level (e.g., Heading 1)
+	 */
+	private AbstractParsingElement handleHeadingLevel(Attributes atts, int level) {
+		ParagraphParsingElement paragraph = this.createNewParagraph();
+		paragraph.setHeadingLevel(StyleConstants.HEADING_BASE + level);
+		return paragraph;
+
+	}
+
+	/**
 	 * This method handles horizontal line start.
 	 * 
 	 * @param atts
@@ -168,6 +196,7 @@ public class XWPFMapper extends DefaultHandler {
 	 * @return paragraph parsing element
 	 */
 	private AbstractParsingElement handleHorizontalLineStart(Attributes atts) {
+
 		ParagraphParsingElement paragraph = this.createNewParagraph();
 		paragraph.setHorizontalLine(true);
 
@@ -945,8 +974,30 @@ public class XWPFMapper extends DefaultHandler {
 			this.handleUnderlineEnd();
 		} else if (HTMLConstants.HR_TAG.equals(name)) {
 			this.handleHorizontalLineEnd();
+		} else if (HTMLConstants.H1_TAG.equals(name)) {
+			this.handleHeadingLevelEnd(1);
+		} else if (HTMLConstants.H2_TAG.equals(name)) {
+			this.handleHeadingLevelEnd(2);
+		} else if (HTMLConstants.H3_TAG.equals(name)) {
+			this.handleHeadingLevelEnd(3);
+		} else if (HTMLConstants.H4_TAG.equals(name)) {
+			this.handleHeadingLevelEnd(4);
+		} else if (HTMLConstants.H5_TAG.equals(name)) {
+			this.handleHeadingLevelEnd(5);
+		} else if (HTMLConstants.H6_TAG.equals(name)) {
+			this.handleHeadingLevelEnd(6);
 		}
 
+	}
+
+	/**
+	 * This method handles heading level end.
+	 * 
+	 * @param level
+	 *            level (e.g., Heading Level 1)
+	 */
+	private void handleHeadingLevelEnd(int level) {
+		// Presently, do nothing
 	}
 
 	/**

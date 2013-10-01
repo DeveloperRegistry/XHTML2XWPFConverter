@@ -36,12 +36,14 @@ public class AbstractParsingElement {
 	private boolean mayContainUnderline;
 	private boolean mayContainStrikeThrough;
 	private boolean mayContainBullet;
+	private boolean mayContainHeading;
 	private boolean mayContainParagraph;
 	private boolean strong;
 	private boolean bullet;
 	private boolean italic;
 	private boolean strikeThrough;
 	private boolean underline;
+	private String headingLevel;
 	private StringBuffer paragraphData;
 	private ArrayList<AbstractParsingElement> innerElements = new ArrayList<AbstractParsingElement>();
 
@@ -333,6 +335,45 @@ public class AbstractParsingElement {
 	 */
 	public void setUnderline(boolean underline) {
 		this.underline = underline;
+	}
+
+	/**
+	 * @return the mayContainHeading
+	 */
+	public boolean isMayContainHeading() {
+		return mayContainHeading;
+	}
+
+	/**
+	 * @param mayContainHeading
+	 *            the mayContainHeading to set
+	 */
+	public void setMayContainHeading(boolean mayContainHeading) {
+		this.mayContainHeading = mayContainHeading;
+	}
+
+	/**
+	 * @return the headingLevel
+	 */
+	public String getHeadingLevel() {
+		return headingLevel;
+	}
+
+	/**
+	 * @param headingLevel
+	 *            the headingLevel to set
+	 */
+	public void setHeadingLevel(String headingLevel) {
+		this.headingLevel = headingLevel;
+	}
+
+	/**
+	 * This method returns true if heading level is set.
+	 * 
+	 * @return true if heading level is set
+	 */
+	public boolean isHeadingLevelSet() {
+		return this.headingLevel != null;
 	}
 
 }
