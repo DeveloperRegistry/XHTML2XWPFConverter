@@ -25,6 +25,7 @@ import org.apache.poi.xwpf.converter.xwpf.bo.TableCellParsingElement;
 import org.apache.poi.xwpf.converter.xwpf.bo.TableParsingElement;
 import org.apache.poi.xwpf.converter.xwpf.bo.TableRowParsingElement;
 import org.apache.poi.xwpf.converter.xwpf.bo.XWPFOptions;
+import org.apache.poi.xwpf.converter.xwpf.common.ConversionUtil;
 import org.apache.poi.xwpf.converter.xwpf.common.ElementType;
 import org.apache.poi.xwpf.converter.xwpf.common.HTMLConstants;
 import org.apache.poi.xwpf.converter.xwpf.common.StyleConstants;
@@ -108,7 +109,7 @@ public class XWPFMapper extends DefaultHandler {
 		this.flushStringBuffer();
 		AbstractParsingElement newElement = null;
 
-		//System.out.println("Element: " + name);
+		// System.out.println("Element: " + name);
 
 		if (HTMLConstants.HTML_TAG.equals(name)) {
 			// Do nothing
@@ -184,7 +185,59 @@ public class XWPFMapper extends DefaultHandler {
 	private AbstractParsingElement handleHeadingLevel(Attributes atts, int level) {
 		ParagraphParsingElement paragraph = this.createNewParagraph();
 		paragraph.setHeadingLevel(StyleConstants.HEADING_BASE + level);
+		this.handleParagraphAttributes(paragraph, atts);
 		return paragraph;
+
+	}
+
+	/**
+	 * This method handles attributes for Heading level
+	 * 
+	 * @param paragraph
+	 *            paragraph
+	 * @param atts
+	 *            attributes
+	 */
+	private void handleParagraphAttributes(ParagraphParsingElement paragraph,
+			Attributes atts) {
+		for (int i = 0; atts != null && i < atts.getLength(); i++) {
+
+			if (HTMLConstants.HTML_ATTRIBUTE_STYLE.equalsIgnoreCase(atts
+					.getQName(i)) && atts.getValue(i) != null) {
+				String style = atts.getValue(i).toLowerCase();
+
+				String[] styleVariables = style.split(";");
+				String styleVariable = null;
+
+				for (int j = 0; j < styleVariables.length; j++) {
+					styleVariable = styleVariables[j];
+					styleVariable = styleVariable != null ? styleVariable
+							.toLowerCase() : "";
+
+					if (styleVariable.startsWith(HTMLConstants.FONT_STYLE)
+							&& styleVariable
+									.endsWith(HTMLConstants.FONT_STYLE_ITALIC)) {
+						paragraph.setItalic(true);
+					}
+					if (styleVariable.startsWith(HTMLConstants.FONT_STYLE)
+							&& styleVariable
+									.endsWith(HTMLConstants.FONT_STYLE_STRONG)) {
+						paragraph.setStrong(true);
+					}
+					if (styleVariable.startsWith(HTMLConstants.COLOR_STYLE)) {
+						String color = styleVariable
+								.substring(HTMLConstants.COLOR_STYLE.length());
+						color = color.startsWith("#") ? color.substring(1)
+								: color;
+						if (color.length() == 3) {
+							color = ConversionUtil.doubleColorLength(color);
+						}
+						paragraph.setFontColor(color);
+					}
+				}
+			}
+
+		}
 
 	}
 
@@ -431,7 +484,7 @@ public class XWPFMapper extends DefaultHandler {
 
 		ParagraphParsingElement paragraph = this.createNewParagraph();
 
-		this.handleParagraphAttributes(atts, paragraph);
+		this.handleParagraphAttributes(paragraph, atts);
 
 		return paragraph;
 
@@ -608,19 +661,6 @@ public class XWPFMapper extends DefaultHandler {
 		}
 
 		return result;
-	}
-
-	/**
-	 * This method handles Paragraph attributes.
-	 * 
-	 * @param atts
-	 *            attributes
-	 * @param paragraph
-	 *            paragraph
-	 */
-	private void handleParagraphAttributes(Attributes atts,
-			ParagraphParsingElement paragraph) {
-		// Do nothing for now
 	}
 
 	/**

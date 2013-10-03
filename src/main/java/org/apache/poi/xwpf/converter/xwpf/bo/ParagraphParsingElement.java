@@ -35,6 +35,7 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 	private StringBuffer paragraphData;
 	private XWPFParagraph docxParagraph;
 	private boolean horizontalLine; // to support HR tag
+	private String fontColor;
 
 	/**
 	 * Constructor
@@ -127,10 +128,14 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 		if (this.isUnderline()) {
 			run.setUnderline(UnderlinePatterns.THICK);
 		}
+		if( this.isFontColorSet() )
+		{
+			run.setColor(this.fontColor);
+		}
 		if (this.isHeadingLevelSet()) {
 			this.docxParagraph.setStyle(this.getHeadingLevel());
-		}
-		run.setText(para);
+		}		
+		run.setText(para);		
 		// System.out.println("Created new run for paragraph: " + para
 		// + "; docxPara=" + this.docxParagraph);
 
@@ -192,4 +197,28 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 		}
 	}
 
+	/**
+	 * @return the fontColor
+	 */
+	public String getFontColor() {
+		return fontColor;
+	}
+
+	/**
+	 * @param fontColor the fontColor to set
+	 */
+	public void setFontColor(String fontColor) {
+		this.fontColor = fontColor;
+	}
+	
+	/**
+	 * This method returns true if font color is set. 
+	 * @return true if font color is set
+	 */
+	public boolean isFontColorSet()
+	{
+		return (this.fontColor != null );
+	}
+	
+	
 }

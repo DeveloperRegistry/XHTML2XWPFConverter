@@ -26,25 +26,46 @@ public class ConversionUtil {
 	private static final double PIXEL_MULTIPLIER_WITH_OFFSET = 15.27;
 
 	/**
-	 * This method converts pixels to width units. 
-	 * @param width width in pixels
+	 * This method converts pixels to width units.
+	 * 
+	 * @param width
+	 *            width in pixels
 	 * @return width units
 	 */
 	public static int convertTableCellPixelsToWidthUnits(double width) {
 		int widthUnits = (int) (EXCEL_COLUMN_WIDTH_FACTOR * (width / UNIT_OFFSET_LENGTH));
 
-		widthUnits = widthUnits + UNIT_OFFSET_MAP[((int)width % UNIT_OFFSET_LENGTH)];
+		widthUnits = widthUnits
+				+ UNIT_OFFSET_MAP[((int) width % UNIT_OFFSET_LENGTH)];
 
 		return widthUnits;
 	}
-	
+
 	/**
 	 * This method converts pixels to 20-th points.
-	 * @param width width to converted
+	 * 
+	 * @param width
+	 *            width to converted
 	 * @return conversion result
 	 */
-	public static double convertPixelsTo20thPoints( double width )
-	{
+	public static double convertPixelsTo20thPoints(double width) {
 		return (width * PIXEL_MULTIPLIER_WITH_OFFSET);
+	}
+
+	/**
+	 * This method converts 3-character color code to 6-character color code by
+	 * doubling each character.
+	 * 
+	 * @param color
+	 *            3-character color string
+	 * @return 6-character color string
+	 */
+	public static String doubleColorLength(String color) {
+		StringBuffer result = new StringBuffer();
+		for (char c : color.toCharArray()) {
+			result.append(c);
+			result.append(c);
+		}
+		return result.toString();
 	}
 }
