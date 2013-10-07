@@ -43,6 +43,7 @@ public class HTMLConstants {
 	public static final String H4_TAG = "h4";
 	public static final String H5_TAG = "h5";
 	public static final String H6_TAG = "h6";
+	public static final String SPAN_TAG = "span";
 	
 	
 	
@@ -52,6 +53,7 @@ public class HTMLConstants {
 
 	public static final String HTML_ATTRIBUTE_BORDER = "border";
 	public static final String HTML_ATTRIBUTE_STYLE = "style";
+	public static final String HTML_ATTRIBUTE_CLASS="class";
 	public static final String HTML_ATTRIBUTE_COLSPAN = "colspan";
 	public static final String HTML_ATTRIBUTE_ROWSPAN = "rowspan";
 	public static final String HTML_ATTRIBUTE_CELLPADDING = "cellpadding";

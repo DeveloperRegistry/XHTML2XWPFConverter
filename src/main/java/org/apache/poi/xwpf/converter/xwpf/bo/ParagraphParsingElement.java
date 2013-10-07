@@ -20,8 +20,11 @@ import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHighlight;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTString;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHighlightColor;
 
 /**
  * This class encapsulates a Paragraph parsing element.
@@ -36,6 +39,8 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 	private XWPFParagraph docxParagraph;
 	private boolean horizontalLine; // to support HR tag
 	private String fontColor;
+	private boolean highlightSpan;
+	private boolean standAloneSpan;
 
 	/**
 	 * Constructor
@@ -77,6 +82,8 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 
 		// System.out.println("Created paragraph: "
 		// + this.docxParagraph
+		// + "; topLevel="
+		// + topLevel
 		// + "; containingElement: "
 		// + ((this.containingElement != null) ? this.containingElement
 		// .getType() : ""));
@@ -128,14 +135,23 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 		if (this.isUnderline()) {
 			run.setUnderline(UnderlinePatterns.THICK);
 		}
-		if( this.isFontColorSet() )
-		{
+		if (this.isFontColorSet()) {
 			run.setColor(this.fontColor);
 		}
+
 		if (this.isHeadingLevelSet()) {
 			this.docxParagraph.setStyle(this.getHeadingLevel());
-		}		
-		run.setText(para);		
+		}
+
+		if (this.isHighlightSpan()) {
+			CTRPr cTRPr = run.getCTR().getRPr() != null ? run.getCTR().getRPr()
+					: run.getCTR().addNewRPr();
+			CTHighlight highlight = cTRPr.addNewHighlight();
+			highlight.setVal(STHighlightColor.YELLOW);
+			this.highlightSpan = false;
+		}
+
+		run.setText(para);
 		// System.out.println("Created new run for paragraph: " + para
 		// + "; docxPara=" + this.docxParagraph);
 
@@ -205,20 +221,50 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 	}
 
 	/**
-	 * @param fontColor the fontColor to set
+	 * @param fontColor
+	 *            the fontColor to set
 	 */
 	public void setFontColor(String fontColor) {
 		this.fontColor = fontColor;
 	}
-	
+
 	/**
-	 * This method returns true if font color is set. 
+	 * This method returns true if font color is set.
+	 * 
 	 * @return true if font color is set
 	 */
-	public boolean isFontColorSet()
-	{
-		return (this.fontColor != null );
+	public boolean isFontColorSet() {
+		return (this.fontColor != null);
 	}
-	
-	
+
+	/**
+	 * @return the highlightSpan
+	 */
+	public boolean isHighlightSpan() {
+		return highlightSpan;
+	}
+
+	/**
+	 * @param highlightSpan
+	 *            the highlightSpan to set
+	 */
+	public void setHighlightSpan(boolean highlightSpan) {
+		this.highlightSpan = highlightSpan;
+	}
+
+	/**
+	 * @return the standAloneSpan
+	 */
+	public boolean isStandAloneSpan() {
+		return standAloneSpan;
+	}
+
+	/**
+	 * @param standAloneSpan
+	 *            the standAloneSpan to set
+	 */
+	public void setStandAloneSpan(boolean standAloneSpan) {
+		this.standAloneSpan = standAloneSpan;
+	}
+
 }

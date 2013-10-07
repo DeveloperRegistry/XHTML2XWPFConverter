@@ -162,6 +162,8 @@ public class XWPFMapper extends DefaultHandler {
 			newElement = this.handleHeadingLevel(atts, 5);
 		} else if (HTMLConstants.H6_TAG.equals(name)) {
 			newElement = this.handleHeadingLevel(atts, 6);
+		} else if (HTMLConstants.SPAN_TAG.equals(name)) {
+			newElement = this.handleSpanStart(atts);
 		} else {
 			// development only. Remove before releasing code
 			// throw new XWPFDocumentConversionException(" Unsupported tag: "
@@ -170,6 +172,62 @@ public class XWPFMapper extends DefaultHandler {
 
 		if (newElement != null) {
 			this.parsingTree.add(newElement);
+		}
+
+	}
+
+	/**
+	 * This method handles span tag start.
+	 * 
+	 * @param atts
+	 *            attributes
+	 * @return resulting parsing element
+	 */
+	private AbstractParsingElement handleSpanStart(Attributes atts) {
+
+		AbstractParsingElement resultingElement = null;
+		ParagraphParsingElement paragraphParsingElement = null;
+		boolean createdNew = false;
+
+		// Clear out the buffer so each span gets its own Run
+		this.flushStringBuffer();
+
+		if (this.currentTopLevelElement == null) {
+			paragraphParsingElement = this.createNewParagraph();
+			paragraphParsingElement.setStandAloneSpan(true);
+			createdNew = true;
+		} else {
+			paragraphParsingElement = this.findLastParagraphElement();
+		}
+
+		this.handleSpanAttributes(paragraphParsingElement, atts);
+
+		if (createdNew) {
+			resultingElement = paragraphParsingElement;
+		}
+
+		return resultingElement;
+
+	}
+
+	/**
+	 * This method handles span attributes.
+	 * 
+	 * @param paragraph
+	 *            paragraph where new span will be added
+	 */
+	private void handleSpanAttributes(ParagraphParsingElement paragraph,
+			Attributes atts) {
+		for (int i = 0; atts != null && i < atts.getLength(); i++) {
+
+			if (HTMLConstants.HTML_ATTRIBUTE_CLASS.equalsIgnoreCase(atts
+					.getQName(i)) && atts.getValue(i) != null) {
+				String className = atts.getValue(i).toLowerCase();
+				if (StyleConstants.STYLE_MARKER.equals(className)) {
+					paragraph.setHighlightSpan(true);
+				}
+
+			}
 		}
 
 	}
@@ -507,7 +565,7 @@ public class XWPFMapper extends DefaultHandler {
 				topLevel, containingElement, null, docxHandler.getDocument());
 
 		if (topLevel) {
-			this.currentTopLevelElement = containingElement;
+			this.currentTopLevelElement = paragraph;
 		}
 		return paragraph;
 	}
@@ -1002,6 +1060,8 @@ public class XWPFMapper extends DefaultHandler {
 			this.handleHyperlinkEnd();
 		} else if (HTMLConstants.UL_TAG.equals(name)) {
 			this.handleListEnd();
+		} else if (HTMLConstants.LI_TAG.equals(name)) {
+			this.handleParagraphEnd();
 		} else if (HTMLConstants.IMG_TAG.equals(name)) {
 			this.handleImageEnd();
 		} else if (HTMLConstants.BR_TAG.equals(name)) {
@@ -1026,6 +1086,22 @@ public class XWPFMapper extends DefaultHandler {
 			this.handleHeadingLevelEnd(5);
 		} else if (HTMLConstants.H6_TAG.equals(name)) {
 			this.handleHeadingLevelEnd(6);
+		} else if (HTMLConstants.SPAN_TAG.equals(name)) {
+			this.handleSpanEnd();
+		}
+
+	}
+
+	/**
+	 * This method handles span end.
+	 */
+	private void handleSpanEnd() {
+		if (this.currentTopLevelElement != null
+				& this.currentTopLevelElement.getType().equals(
+						ElementType.PARAGRAPH)
+				&& ((ParagraphParsingElement) this.currentTopLevelElement)
+						.isStandAloneSpan()) {
+			this.currentTopLevelElement = null;
 		}
 
 	}
@@ -1037,15 +1113,26 @@ public class XWPFMapper extends DefaultHandler {
 	 *            level (e.g., Heading Level 1)
 	 */
 	private void handleHeadingLevelEnd(int level) {
-		// Presently, do nothing
+		this.resetTopLevelParagraphElement();
 	}
 
 	/**
 	 * This method handles horizontal line end.
 	 */
 	private void handleHorizontalLineEnd() {
-		// Presently, do nothing
+		this.resetTopLevelParagraphElement();
 
+	}
+
+	/**
+	 * This method nullifies current top level element if it is a paragraph.
+	 */
+	private void resetTopLevelParagraphElement() {
+		if (this.currentTopLevelElement != null
+				& this.currentTopLevelElement.getType().equals(
+						ElementType.PARAGRAPH)) {
+			this.currentTopLevelElement = null;
+		}
 	}
 
 	/**
@@ -1127,6 +1214,8 @@ public class XWPFMapper extends DefaultHandler {
 		if (lastParagraph.getParagraphData() == null) {
 			lastParagraph.createEmptyRun();
 		}
+
+		resetTopLevelParagraphElement();
 	}
 
 	/**

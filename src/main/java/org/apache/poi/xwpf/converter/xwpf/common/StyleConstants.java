@@ -24,5 +24,7 @@ public class StyleConstants {
 	public static final String LIST_PARAGRAPH = "ListParagraph";
 	public static final String BULLET_UNICODE = "\u2022";
 	public static final String HEADING_BASE = "Heading";
+	public static final String STYLE_MARKER = "marker";
+	
 
 }
