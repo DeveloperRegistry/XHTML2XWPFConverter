@@ -36,5 +36,16 @@ public class DocXTemplate {
 				DataAccess.class.getResourceAsStream(TemplateConstants.FILE_NAME_EMPTY_BULLET_TEMPLATE));
 		return document;
 	}
+	
+	/**
+	 * This method returns simple  DocX template. 
+	 * @return
+	 * @throws IOException
+	 */
+	public static XWPFDocument getSimpleDocumentTemplate() throws IOException {
+		XWPFDocument document = new XWPFDocument(
+				DataAccess.class.getResourceAsStream(TemplateConstants.FILE_NAME_SIMPLE_TEMPLATE));
+		return document;
+	}
 
 }

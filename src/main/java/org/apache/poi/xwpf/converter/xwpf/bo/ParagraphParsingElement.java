@@ -13,6 +13,8 @@
  */
 package org.apache.poi.xwpf.converter.xwpf.bo;
 
+import java.math.BigInteger;
+
 import org.apache.poi.xwpf.converter.xwpf.common.ElementType;
 import org.apache.poi.xwpf.converter.xwpf.common.StyleConstants;
 import org.apache.poi.xwpf.usermodel.Borders;
@@ -64,6 +66,7 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 		super.setMayContainItalic(true);
 		super.setMayContainStrikeThrough(true);
 		super.setMayContainBullet(true);
+		super.setMayContainNumbering(true);
 		super.setMayContainUnderline(true);
 		this.setMayContainHeading(true);
 		this.containingElement = containingElement;
@@ -120,15 +123,17 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 		String para = paragraphData.toString();
 
 		if (this.isBullet()) {
-			para = StyleConstants.BULLET_UNICODE + "   " + para;
-
-			CTPPr ppr = this.docxParagraph.getCTP().addNewPPr();
-			CTString style = ppr.addNewPStyle();
-			style.setVal(StyleConstants.LIST_PARAGRAPH);
+			this.setListParagraphStyle();
+			this.docxParagraph.setNumID(BigInteger.valueOf(1));
+		}
+		
+		if (this.isNumbering()) {
+			this.setListParagraphStyle();
+			this.docxParagraph.setNumID(BigInteger.valueOf(this.getNumberedListValue()));
 		}
 
 		XWPFRun run = this.docxParagraph.createRun(); // create run object in
-														// the paragraph
+														// the paragraph		
 		run.setBold(this.isStrong());
 		run.setItalic(this.isItalic());
 		run.setStrike(this.isStrikeThrough());
@@ -155,6 +160,15 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 		// System.out.println("Created new run for paragraph: " + para
 		// + "; docxPara=" + this.docxParagraph);
 
+	}
+
+	/**
+	 * This method sets list paragraph style.
+	 */
+	private void setListParagraphStyle() {
+		CTPPr ppr = this.docxParagraph.getCTP().addNewPPr();
+		CTString style = ppr.addNewPStyle();
+		style.setVal(StyleConstants.LIST_PARAGRAPH);
 	}
 
 	/**
@@ -207,6 +221,7 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 			super.setMayContainItalic(false);
 			super.setMayContainStrikeThrough(false);
 			super.setMayContainBullet(false);
+			super.setMayContainNumbering(false);
 			super.setMayContainUnderline(false);
 			super.setMayContainHeading(false);
 			this.docxParagraph.setBorderBottom(Borders.SINGLE);

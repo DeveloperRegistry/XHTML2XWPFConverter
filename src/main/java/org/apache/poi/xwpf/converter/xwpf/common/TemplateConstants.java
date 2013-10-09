@@ -23,5 +23,6 @@ public class TemplateConstants {
 
 	public static final String FILE_NAME_BULLET_TEMPLATE = "bullet_template.docx";
 	public static final String FILE_NAME_EMPTY_BULLET_TEMPLATE = "empty_template.docx";
+	public static final String FILE_NAME_SIMPLE_TEMPLATE = "Simple_Template.docx";
 
 }

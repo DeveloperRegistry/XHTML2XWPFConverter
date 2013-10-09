@@ -36,15 +36,18 @@ public class AbstractParsingElement {
 	private boolean mayContainUnderline;
 	private boolean mayContainStrikeThrough;
 	private boolean mayContainBullet;
+	private boolean mayContainNumbering;
 	private boolean mayContainHeading;
 	private boolean mayContainParagraph;
 	private boolean strong;
 	private boolean bullet;
+	private boolean numbering;
 	private boolean italic;
 	private boolean strikeThrough;
 	private boolean underline;
 	private String headingLevel;
 	private StringBuffer paragraphData;
+	private int numberedListValue;
 	private ArrayList<AbstractParsingElement> innerElements = new ArrayList<AbstractParsingElement>();
 
 	/**
@@ -374,6 +377,51 @@ public class AbstractParsingElement {
 	 */
 	public boolean isHeadingLevelSet() {
 		return this.headingLevel != null;
+	}
+
+	/**
+	 * @return the mayContainNumbering
+	 */
+	public boolean isMayContainNumbering() {
+		return mayContainNumbering;
+	}
+
+	/**
+	 * @param mayContainNumbering
+	 *            the mayContainNumbering to set
+	 */
+	public void setMayContainNumbering(boolean mayContainNumbering) {
+		this.mayContainNumbering = mayContainNumbering;
+	}
+
+	/**
+	 * @return the numbering
+	 */
+	public boolean isNumbering() {
+		return numbering;
+	}
+
+	/**
+	 * @param numbering
+	 *            the numbering to set
+	 */
+	public void setNumbering(boolean numbering) {
+		this.numbering = numbering;
+	}
+
+	/**
+	 * @return the numberedListValue
+	 */
+	public int getNumberedListValue() {
+		return numberedListValue;
+	}
+
+	/**
+	 * @param numberedListValue
+	 *            the numberedListValue to set
+	 */
+	public void setNumberedListValue(int numberedListValue) {
+		this.numberedListValue = numberedListValue;
 	}
 
 }

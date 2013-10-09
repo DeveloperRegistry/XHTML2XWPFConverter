@@ -51,6 +51,9 @@ public class XWPFMapper extends DefaultHandler {
 	private TableRowParsingElement currentRow;
 	private StringBuffer currentTextBuffer;
 	private List<AbstractParsingElement> parsingTree;
+	private boolean bulletList;
+	private boolean numberedList;
+	private int numberedListValue = 3;
 
 	/**
 	 * Private constructor to prevent initialization.
@@ -134,10 +137,14 @@ public class XWPFMapper extends DefaultHandler {
 		} else if (HTMLConstants.A_TAG.equals(name)) {
 			newElement = this.handleHyperlinkStart(atts);
 		} else if (HTMLConstants.UL_TAG.equals(name)) {
-			this.handleListStart(atts);
+			this.handleBulletListStart(atts);
+		} else if (HTMLConstants.OL_TAG.equals(name)) {
+			this.handleNumberedListStart(atts);
 		} else if (HTMLConstants.LI_TAG.equals(name)) {
 			newElement = this.handleParagraphStart(atts);
-			newElement.setBullet(true);
+			newElement.setBullet(this.bulletList);
+			newElement.setNumbering(this.numberedList);
+			newElement.setNumberedListValue(this.numberedListValue);
 		} else if (HTMLConstants.IMG_TAG.equals(name)) {
 			newElement = this.handleImageStart(atts);
 		} else if (HTMLConstants.BR_TAG.equals(name)) {
@@ -166,8 +173,8 @@ public class XWPFMapper extends DefaultHandler {
 			newElement = this.handleSpanStart(atts);
 		} else {
 			// development only. Remove before releasing code
-			// throw new XWPFDocumentConversionException(" Unsupported tag: "
-			// + name + ". Implement the tag!");
+		//	throw new XWPFDocumentConversionException(" Unsupported tag: "
+		//			+ name + ". Implement the tag!");
 		}
 
 		if (newElement != null) {
@@ -467,13 +474,23 @@ public class XWPFMapper extends DefaultHandler {
 	}
 
 	/**
-	 * This method handles list start
+	 * This method handles bullet list start
 	 * 
 	 * @param atts
 	 *            attributes
 	 */
-	private void handleListStart(Attributes atts) {
-		// Presently do nothing
+	private void handleBulletListStart(Attributes atts) {
+		this.bulletList = true;
+	}
+	
+	/**
+	 * This method handles numbered list start
+	 * 
+	 * @param atts
+	 *            attributes
+	 */
+	private void handleNumberedListStart(Attributes atts) {
+		this.numberedList = true;
 	}
 
 	/**
@@ -1059,7 +1076,9 @@ public class XWPFMapper extends DefaultHandler {
 		} else if (HTMLConstants.A_TAG.equals(name)) {
 			this.handleHyperlinkEnd();
 		} else if (HTMLConstants.UL_TAG.equals(name)) {
-			this.handleListEnd();
+			this.handleBulletListEnd();
+		} else if (HTMLConstants.OL_TAG.equals(name)) {
+			this.handleNumberedListEnd();
 		} else if (HTMLConstants.LI_TAG.equals(name)) {
 			this.handleParagraphEnd();
 		} else if (HTMLConstants.IMG_TAG.equals(name)) {
@@ -1191,10 +1210,18 @@ public class XWPFMapper extends DefaultHandler {
 	}
 
 	/**
-	 * This method handles list end.
+	 * This method handles bullet list end.
 	 */
-	private void handleListEnd() {
-		// Presently, do nothing
+	private void handleBulletListEnd() {
+		this.bulletList = false;
+	}
+	
+	/**
+	 * This method handles numbered list end.
+	 */
+	private void handleNumberedListEnd() {
+		this.numberedList = false;
+		this.numberedListValue++;
 	}
 
 	/**
