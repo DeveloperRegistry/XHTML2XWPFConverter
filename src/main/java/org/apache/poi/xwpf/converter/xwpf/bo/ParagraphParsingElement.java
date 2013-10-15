@@ -22,6 +22,7 @@ import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHighlight;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
@@ -61,14 +62,7 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 			AbstractParsingElement containingElement,
 			StringBuffer paragraphData, XWPFDocument document) {
 		super(ElementType.PARAGRAPH, topLevel, document);
-		super.setMayContainText(true);
-		super.setMayContainStrong(true);
-		super.setMayContainItalic(true);
-		super.setMayContainStrikeThrough(true);
-		super.setMayContainBullet(true);
-		super.setMayContainNumbering(true);
-		super.setMayContainUnderline(true);
-		this.setMayContainHeading(true);
+		this.initializeCommonParagraphFields();
 		this.containingElement = containingElement;
 		this.paragraphData = paragraphData;
 
@@ -90,6 +84,45 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 		// + "; containingElement: "
 		// + ((this.containingElement != null) ? this.containingElement
 		// .getType() : ""));
+	}
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param cursor
+	 *            cursor where new paragraph will be inserted
+	 * @param document
+	 *            document
+	 */
+	public ParagraphParsingElement(XmlCursor cursor, XWPFDocument document) {
+		super(ElementType.PARAGRAPH, false, document);
+		this.initializeCommonParagraphFields();
+		this.containingElement = null;
+		this.paragraphData = null;
+
+		this.docxParagraph = document.insertNewParagraph(cursor);
+		// System.out.println("Created paragraph: "
+		// + this.docxParagraph
+		// + "; topLevel="
+		// + topLevel
+		// + "; containingElement: "
+		// + ((this.containingElement != null) ? this.containingElement
+		// .getType() : ""));
+
+	}
+
+	/**
+	 * This method initializes common paragraph fields
+	 */
+	private void initializeCommonParagraphFields() {
+		super.setMayContainText(true);
+		super.setMayContainStrong(true);
+		super.setMayContainItalic(true);
+		super.setMayContainStrikeThrough(true);
+		super.setMayContainBullet(true);
+		super.setMayContainNumbering(true);
+		super.setMayContainUnderline(true);
+		super.setMayContainHeading(true);
 	}
 
 	/**
@@ -126,14 +159,15 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 			this.setListParagraphStyle();
 			this.docxParagraph.setNumID(BigInteger.valueOf(1));
 		}
-		
+
 		if (this.isNumbering()) {
 			this.setListParagraphStyle();
-			this.docxParagraph.setNumID(BigInteger.valueOf(this.getNumberedListValue()));
+			this.docxParagraph.setNumID(BigInteger.valueOf(this
+					.getNumberedListValue()));
 		}
 
 		XWPFRun run = this.docxParagraph.createRun(); // create run object in
-														// the paragraph		
+														// the paragraph
 		run.setBold(this.isStrong());
 		run.setItalic(this.isItalic());
 		run.setStrike(this.isStrikeThrough());

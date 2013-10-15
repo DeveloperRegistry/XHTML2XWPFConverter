@@ -13,7 +13,7 @@
  */
 package org.apache.poi.xwpf.converter.xwpf.bo;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.xwpf.converter.xwpf.common.ElementType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -48,7 +48,7 @@ public class AbstractParsingElement {
 	private String headingLevel;
 	private StringBuffer paragraphData;
 	private int numberedListValue;
-	private ArrayList<AbstractParsingElement> innerElements = new ArrayList<AbstractParsingElement>();
+	private List<AbstractParsingElement> parsingTree;
 
 	/**
 	 * Private constructor to prevent initialization.
@@ -73,16 +73,6 @@ public class AbstractParsingElement {
 		this.type = type;
 		this.topLevel = topLevel;
 		this.document = document;
-	}
-
-	/**
-	 * Adds new inner element.
-	 * 
-	 * @param innerElement
-	 *            inner element to add
-	 */
-	public void addInnerParsingElement(AbstractParsingElement innerElement) {
-		this.innerElements.add(innerElement);
 	}
 
 	/**
@@ -113,21 +103,6 @@ public class AbstractParsingElement {
 	 */
 	public void setType(ElementType type) {
 		this.type = type;
-	}
-
-	/**
-	 * @return the innerElements
-	 */
-	public ArrayList<AbstractParsingElement> getInnerElements() {
-		return innerElements;
-	}
-
-	/**
-	 * @param innerElements
-	 *            the innerElements to set
-	 */
-	public void setInnerElements(ArrayList<AbstractParsingElement> innerElements) {
-		this.innerElements = innerElements;
 	}
 
 	/**
@@ -422,6 +397,21 @@ public class AbstractParsingElement {
 	 */
 	public void setNumberedListValue(int numberedListValue) {
 		this.numberedListValue = numberedListValue;
+	}
+
+	/**
+	 * @return the parsingTree
+	 */
+	public List<AbstractParsingElement> getParsingTree() {
+		return parsingTree;
+	}
+
+	/**
+	 * @param parsingTree
+	 *            the parsingTree to set
+	 */
+	public void setParsingTree(List<AbstractParsingElement> parsingTree) {
+		this.parsingTree = parsingTree;
 	}
 
 }

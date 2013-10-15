@@ -171,16 +171,27 @@ public class XWPFMapper extends DefaultHandler {
 			newElement = this.handleHeadingLevel(atts, 6);
 		} else if (HTMLConstants.SPAN_TAG.equals(name)) {
 			newElement = this.handleSpanStart(atts);
+		} else if (HTMLConstants.CAPTION_TAG.equals(name)) {
+			this.handleTableCaptionStart();
 		} else {
 			// development only. Remove before releasing code
-		//	throw new XWPFDocumentConversionException(" Unsupported tag: "
-		//			+ name + ". Implement the tag!");
+			// throw new XWPFDocumentConversionException(" Unsupported tag: "
+			// + name + ". Implement the tag!");
 		}
 
 		if (newElement != null) {
 			this.parsingTree.add(newElement);
 		}
 
+	}
+
+	/**
+	 * This method handles table caption start.
+	 */
+	private void handleTableCaptionStart() {
+		TableParsingElement table = this.findLastTableElement();
+		table.setMayContainText(true);
+		table.setParsingTree(this.parsingTree);
 	}
 
 	/**
@@ -482,7 +493,7 @@ public class XWPFMapper extends DefaultHandler {
 	private void handleBulletListStart(Attributes atts) {
 		this.bulletList = true;
 	}
-	
+
 	/**
 	 * This method handles numbered list start
 	 * 
@@ -1107,8 +1118,17 @@ public class XWPFMapper extends DefaultHandler {
 			this.handleHeadingLevelEnd(6);
 		} else if (HTMLConstants.SPAN_TAG.equals(name)) {
 			this.handleSpanEnd();
+		} else if (HTMLConstants.CAPTION_TAG.equals(name)) {
+			this.handleTableCaptionEnd();
 		}
 
+	}
+
+	/**
+	 * This method handles table caption end.
+	 */
+	private void handleTableCaptionEnd() {
+		// Presently, do nothing
 	}
 
 	/**
@@ -1215,7 +1235,7 @@ public class XWPFMapper extends DefaultHandler {
 	private void handleBulletListEnd() {
 		this.bulletList = false;
 	}
-	
+
 	/**
 	 * This method handles numbered list end.
 	 */

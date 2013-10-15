@@ -23,7 +23,6 @@ import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageSz;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblGrid;
@@ -61,13 +60,14 @@ public class TableCellParsingElement extends AbstractParsingElement {
 			TableRowParsingElement tableRowParsingElement, XWPFDocument document) {
 		super(ElementType.TABLE_CELL, false, document);
 		super.setMayContainParagraph(true);
+		super.setMayContainText(true);
 		this.tableRowParsingElement = tableRowParsingElement;
 		this.docxTableRow = tableRowParsingElement.getDocxTableRow();
 
 		this.addRowSpanCellIfNeeded();
 
 		this.docxTableCell = this.createNewCell();
-		// System.out.println("Created new CELL");
+	    //System.out.println("Created new CELL");
 
 	}
 
@@ -348,6 +348,15 @@ public class TableCellParsingElement extends AbstractParsingElement {
 		}
 	}
 
+	@Override
+	public void setParagraphData(StringBuffer paragraphData) {
+
+		//System.out.println("TableCellParsingElement::Setting paragraphData="
+		//		+ paragraphData);
+		this.docxTableCell.setText(paragraphData.toString());
+
+	}
+
 	/**
 	 * @return the tableRowParsingElement
 	 */
@@ -378,5 +387,4 @@ public class TableCellParsingElement extends AbstractParsingElement {
 	public void setRowSpanCellNumber(int rowSpanCellNumber) {
 		this.rowSpanCellNumber = rowSpanCellNumber;
 	}
-
 }

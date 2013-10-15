@@ -45,6 +45,7 @@ public class HTMLConstants {
 	public static final String H5_TAG = "h5";
 	public static final String H6_TAG = "h6";
 	public static final String SPAN_TAG = "span";
+	public static final String CAPTION_TAG = "caption";
 	
 	
 	

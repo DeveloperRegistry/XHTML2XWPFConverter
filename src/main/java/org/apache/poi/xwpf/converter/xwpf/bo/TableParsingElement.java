@@ -24,17 +24,22 @@ import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.converter.xwpf.common.ConversionUtil;
 import org.apache.poi.xwpf.converter.xwpf.common.ElementType;
 import org.apache.poi.xwpf.converter.xwpf.common.HTMLConstants;
+import org.apache.poi.xwpf.converter.xwpf.common.StyleConstants;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTable.XWPFBorderType;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageSz;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblGrid;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblGridCol;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * This class encapsulates a table parsing element.
@@ -124,8 +129,11 @@ public class TableParsingElement extends AbstractParsingElement {
 	 *            right margin
 	 */
 	public void setCellMargins(int top, int left, int bottom, int right) {
-		docxTable.setCellMargins(Units.toEMU(top), Units.toEMU(left),
-				Units.toEMU(bottom), Units.toEMU(right));
+		docxTable.setCellMargins(
+				(int) ConversionUtil.convertPixelsTo20thPoints(top),
+				(int) ConversionUtil.convertPixelsTo20thPoints(left),
+				(int) ConversionUtil.convertPixelsTo20thPoints(bottom),
+				(int) ConversionUtil.convertPixelsTo20thPoints(right));
 		// System.out.println("setCellMargins. top=" + top + "; left=" + left
 		// + "; bottom" + bottom + "; right=" + right);
 	}
@@ -150,7 +158,7 @@ public class TableParsingElement extends AbstractParsingElement {
 			docxTable.setWidth((int) ConversionUtil
 					.convertPixelsTo20thPoints(width));
 		}
-		// System.out.println(" Set table width to: "+docxTable.getWidth());
+		// System.out.println(" Set table width to: " + docxTable.getWidth());
 	}
 
 	/**
@@ -268,7 +276,7 @@ public class TableParsingElement extends AbstractParsingElement {
 
 		if (cTTbl != null) {
 
-			this.getCTTblPr(cTTbl);
+			this.getCTTblPr();
 
 			grid = this.getCTTblGrid(cTTbl);
 			cols = grid.getGridColList();
@@ -337,11 +345,10 @@ public class TableParsingElement extends AbstractParsingElement {
 	 *            CTTblPr
 	 * @return CTTblPr
 	 */
-	private CTTblPr getCTTblPr(CTTbl cTTbl) {
-		CTTblPr cTTblpr = cTTbl.getTblPr();
-		if (cTTblpr == null) {
-			cTTblpr = docxTable.getCTTbl().addNewTblPr();
-		}
+	private CTTblPr getCTTblPr() {
+		CTTblPr cTTblpr = this.docxTable.getCTTbl().getTblPr() != null ? this.docxTable
+				.getCTTbl().getTblPr() : this.docxTable.getCTTbl()
+				.addNewTblPr();
 		return cTTblpr;
 	}
 
@@ -355,6 +362,54 @@ public class TableParsingElement extends AbstractParsingElement {
 				.getSectPr().getPgSz();
 		BigInteger documentWidth = pageSize.getW();
 		return documentWidth;
+	}
+
+	/**
+	 * This method can be called only for table caption.
+	 */
+	@Override
+	public void setParagraphData(StringBuffer paragraphData) {
+		// Initialize the table Pr
+		this.getCTTblPr();
+
+		// System.out.println("CTTbl()=" + this.docxTable.getCTTbl());
+		// System.out.println("*****************************");
+		// System.out.println("cTTblPr=" + cTTblPr);
+
+		// Adding via XML
+		Node tableNode = this.docxTable.getCTTbl().getDomNode();
+		Element node = tableNode
+				.getOwnerDocument()
+				.createElementNS(
+						StyleConstants.HTTP_SCHEMAS_OPENXMLFORMATS_ORG_WORDPROCESSINGML_2006_MAIN,
+						StyleConstants.TBL_CAPTION);
+		node.setAttributeNS(
+				StyleConstants.HTTP_SCHEMAS_OPENXMLFORMATS_ORG_WORDPROCESSINGML_2006_MAIN,
+				StyleConstants.VAL, paragraphData.toString());
+		NodeList nodeList = tableNode.getChildNodes();
+
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Node currentNode = nodeList.item(i);
+
+			if (currentNode.getNodeName().equals(StyleConstants.TBL_PR)) {
+				currentNode.appendChild(node);
+				break;
+			}
+		}
+
+		// System.out.println("CTTbl()=" + this.docxTable.getCTTbl());
+
+		XmlCursor cursor = this.docxTable.getCTTbl().newCursor();
+		ParagraphParsingElement captionParagraph = new ParagraphParsingElement(
+				cursor, this.getDocument());
+		captionParagraph.setParagraphData(paragraphData);
+		// Add new paragraph to the parsing tree
+		this.getParsingTree().add(this.getParsingTree().lastIndexOf(this),
+				captionParagraph);
+		captionParagraph.getDocxParagraph().setStyle(
+				StyleConstants.STYLE_CAPTION);
+
+		super.setMayContainText(false);
 	}
 
 }

@@ -21,10 +21,17 @@ package org.apache.poi.xwpf.converter.xwpf.common;
  */
 public class StyleConstants {
 
+
+	public static final String HTTP_SCHEMAS_OPENXMLFORMATS_ORG_WORDPROCESSINGML_2006_MAIN = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+	
 	public static final String LIST_PARAGRAPH = "ListParagraph";
 	public static final String BULLET_UNICODE = "\u2022";
 	public static final String HEADING_BASE = "Heading";
 	public static final String STYLE_MARKER = "marker";
+	public static final String STYLE_CAPTION = "Caption";	
+	public static final String TBL_PR = "tblPr";
+	public static final String VAL = "val";
+	public static final String TBL_CAPTION = "tblCaption";
 	
 
 }
