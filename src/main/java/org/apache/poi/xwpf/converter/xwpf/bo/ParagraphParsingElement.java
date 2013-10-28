@@ -74,16 +74,22 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 				&& ElementType.TABLE_CELL.equals(containingElement.getType())) {
 			TableCellParsingElement cell = (TableCellParsingElement) containingElement;
 			this.docxParagraph = cell.getDocxTableCell().addParagraph();
+		}
+		
+		if (!topLevel && containingElement != null
+				&& ElementType.PARAGRAPH.equals(containingElement.getType())) {
+			ParagraphParsingElement paragraph = (ParagraphParsingElement) containingElement;
+			this.docxParagraph = paragraph.getDocxParagraph();
 
 		}
 
-		// System.out.println("Created paragraph: "
-		// + this.docxParagraph
-		// + "; topLevel="
-		// + topLevel
-		// + "; containingElement: "
-		// + ((this.containingElement != null) ? this.containingElement
-		// .getType() : ""));
+//		 System.out.println("Created paragraph: "
+//		 + this.docxParagraph
+//		 + "; topLevel="
+//		 + topLevel
+//		 + "; containingElement: "
+//		 + ((this.containingElement != null) ? this.containingElement
+//		 .getType() : ""));
 	}
 
 	/**
@@ -123,6 +129,7 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 		super.setMayContainNumbering(true);
 		super.setMayContainUnderline(true);
 		super.setMayContainHeading(true);
+		super.setMayContainParagraph(true);
 	}
 
 	/**
@@ -146,11 +153,10 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 	public StringBuffer getParagraphData() {
 		return paragraphData;
 	}
-
 	@Override
 	public void setParagraphData(StringBuffer paragraphData) {
 
-		// System.out.println("Setting paragraphData="+paragraphData);
+		//System.out.println("Setting paragraphData="+paragraphData);
 		this.paragraphData = paragraphData;
 
 		String para = paragraphData.toString();
@@ -191,8 +197,8 @@ public class ParagraphParsingElement extends AbstractParsingElement {
 		}
 
 		run.setText(para);
-		// System.out.println("Created new run for paragraph: " + para
-		// + "; docxPara=" + this.docxParagraph);
+//		 System.out.println("Created new run for paragraph: " + para
+//		 + "; docxPara=" + this.docxParagraph);
 
 	}
 

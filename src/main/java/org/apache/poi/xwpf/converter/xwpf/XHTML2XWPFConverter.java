@@ -56,6 +56,7 @@ public class XHTML2XWPFConverter {
 			XWPFConverter.getInstance().doConvert(in, out, options);
 		} catch (Exception e) {
 			LOGGER.severe(e.getMessage());
+			e.printStackTrace();
 			throw new XWPFDocumentConversionException(e);
 		}
 	}

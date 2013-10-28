@@ -112,7 +112,7 @@ public class XWPFMapper extends DefaultHandler {
 		this.flushStringBuffer();
 		AbstractParsingElement newElement = null;
 
-		// System.out.println("Element: " + name);
+		//System.out.println("Element: " + name);
 
 		if (HTMLConstants.HTML_TAG.equals(name)) {
 			// Do nothing
@@ -1168,7 +1168,7 @@ public class XWPFMapper extends DefaultHandler {
 	 */
 	private void resetTopLevelParagraphElement() {
 		if (this.currentTopLevelElement != null
-				& this.currentTopLevelElement.getType().equals(
+				&& this.currentTopLevelElement.getType().equals(
 						ElementType.PARAGRAPH)) {
 			this.currentTopLevelElement = null;
 		}

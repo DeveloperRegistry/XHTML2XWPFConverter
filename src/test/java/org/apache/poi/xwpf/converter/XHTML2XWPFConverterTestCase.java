@@ -182,5 +182,18 @@ public class XHTML2XWPFConverterTestCase {
 				DataAccess.class.getResourceAsStream("advanced_formatting_and_chars_test.xhtml"), out, null);
 		Assert.assertTrue(outFile.exists());
 	}
+	
+	@Test
+	public void testCVPWithinPWithOutputToFile() throws Exception {
+
+		File outFile = new File("target/cv_p_within_p.docx");
+		outFile.getParentFile().mkdirs();
+
+		OutputStream out = new FileOutputStream(outFile);
+
+		XHTML2XWPFConverter.getInstance().convert(
+				DataAccess.class.getResourceAsStream("cv_p_within_p.xhtml"), out, null);
+		Assert.assertTrue(outFile.exists());
+	}
 
 }

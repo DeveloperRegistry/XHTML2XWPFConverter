@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="4.847" errors="0" skipped="0" tests="8" name="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase">
+<testsuite failures="0" time="2.1" errors="0" skipped="0" tests="13" name="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\glassfish3\jdk7\jre\bin"/>
@@ -26,9 +26,9 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="user.variant" value=""/>
     <property name="os.name" value="Windows 8"/>
-    <property name="classworlds.conf" value="C:\workspace\converter\.metadata\.plugins\org.eclipse.m2e.core\launches\m2conf2372633961470697184.tmp"/>
+    <property name="classworlds.conf" value="C:\workspace\converter\.metadata\.plugins\org.eclipse.m2e.core\launches\m2conf5250408714199348816.tmp"/>
     <property name="sun.jnu.encoding" value="Cp1252"/>
-    <property name="java.library.path" value="C:\glassfish3\jdk7\jre\bin;C:\windows\Sun\Java\bin;C:\windows\system32;C:\windows;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files\Diskeeper Corporation\ExpressCache\;C:\glassfish3\jdk7/bin;C:\glassfish3\jdk7/lib;C:\liferay\liferay-portal-6.1.1-ce-ga2\jboss-7.1.1/bin;C:\apache-maven-3.0.4/bin;."/>
+    <property name="java.library.path" value="C:\glassfish3\jdk7\jre\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files\Diskeeper Corporation\ExpressCache\;C:\glassfish3\jdk7/bin;C:\glassfish3\jdk7/lib;C:\liferay\liferay-portal-6.1.1-ce-ga2\jboss-7.1.1/bin;C:\apache-maven-3.0.4/bin;."/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.class.version" value="51.0"/>
     <property name="sun.management.compiler" value="HotSpot Client Compiler"/>
@@ -49,7 +49,7 @@
     <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
     <property name="java.vm.info" value="mixed mode"/>
     <property name="java.version" value="1.7.0_11"/>
-    <property name="java.ext.dirs" value="C:\glassfish3\jdk7\jre\lib\ext;C:\windows\Sun\Java\lib\ext"/>
+    <property name="java.ext.dirs" value="C:\glassfish3\jdk7\jre\lib\ext;C:\WINDOWS\Sun\Java\lib\ext"/>
     <property name="sun.boot.class.path" value="C:\glassfish3\jdk7\jre\lib\resources.jar;C:\glassfish3\jdk7\jre\lib\rt.jar;C:\glassfish3\jdk7\jre\lib\jsse.jar;C:\glassfish3\jdk7\jre\lib\jce.jar;C:\glassfish3\jdk7\jre\lib\charsets.jar;C:\glassfish3\jdk7\jre\lib\jfr.jar;C:\glassfish3\jdk7\lib\tools.jar"/>
     <property name="java.vendor" value="Oracle Corporation"/>
     <property name="maven.home" value="C:\Users\Anton\git\XHTML2XWPFConverter\EMBEDDED"/>
@@ -60,12 +60,17 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86"/>
   </properties>
-  <testcase time="2.525" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testCVWithHyperlinkConversionWithOutputToFile"/>
-  <testcase time="0.197" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testInMemoryConversion"/>
-  <testcase time="0.701" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testAdvancedCVWithOutputToFile"/>
-  <testcase time="0.865" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testAdvancedTableWithOutputToFile"/>
-  <testcase time="0.112" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testConversionWithOutputToFile"/>
-  <testcase time="0.168" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testTableConversionWithOutputToFile"/>
-  <testcase time="0.1" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testLetterConversionWithOutputToFile"/>
-  <testcase time="0.114" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testAdvancedTableSubsetWithOutputToFile"/>
+  <testcase time="0.946" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testInMemoryConversion"/>
+  <testcase time="0.073" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testCVPWithinPWithOutputToFile"/>
+  <testcase time="0.051" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testFormattingTestWithOutputToFile"/>
+  <testcase time="0.046" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testNumbersTestWithOutputToFile"/>
+  <testcase time="0.095" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testLetterConversionWithOutputToFile"/>
+  <testcase time="0.388" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testAdvancedTableWithOutputToFile"/>
+  <testcase time="0.053" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testConversionWithOutputToFile"/>
+  <testcase time="0.077" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testWebTableTestWithOutputToFile"/>
+  <testcase time="0.165" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testAdvancedCVWithOutputToFile"/>
+  <testcase time="0.046" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testTableConversionWithOutputToFile"/>
+  <testcase time="0.047" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testAdvancedTableSubsetWithOutputToFile"/>
+  <testcase time="0.043" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testCVWithHyperlinkConversionWithOutputToFile"/>
+  <testcase time="0.041" classname="org.apache.poi.xwpf.converter.XHTML2XWPFConverterTestCase" name="testAdvancedFormattingAndCharsTestWithOutputToFile"/>
 </testsuite>
